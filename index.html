@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Byte Solutions | Premium Software Company</title>
     
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Digital Byte Solutions - Crafting enterprise-grade software, AI integrations, and professional IT training. Unleash the power of code.">
+    <meta name="keywords" content="Software Development, Web Development, Mobile Apps, IT Training, MERN, AI, Cyber Security, Placements">
+    <meta name="author" content="Digital Byte Solutions">
+    
+    <!-- Open Graph / Social Media Meta Tags -->
+    <meta property="og:title" content="Digital Byte Solutions | Premium Software Company">
+    <meta property="og:description" content="Pioneering the future of technology with enterprise-grade solutions and world-class IT training programs.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="logo.png">
+    
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +25,7 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     
     <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
     
@@ -23,7 +34,7 @@
     
     <!-- Video Background -->
     <div class="video-wrapper">
-        <video autoplay loop muted playsinline class="video-background">
+        <video autoplay loop muted playsinline class="video-background" poster="logo.png">
             <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260315_073750_51473149-4350-4920-ae24-c8214286f323.mp4" type="video/mp4">
         </video>
         <div class="video-overlay"></div>
@@ -144,7 +155,8 @@
                                     
                                     <div class="input-group-3d">
                                         <i class="ri-lock-2-line input-icon"></i>
-                                        <input type="password" placeholder="Password" required>
+                                        <input type="password" placeholder="Password" id="login-password" required>
+                                        <i class="ri-eye-off-line password-toggle" style="position: absolute; right: 15px; top: 18px; color: rgba(255,255,255,0.5); cursor: pointer; z-index: 10;"></i>
                                         <div class="input-border"></div>
                                     </div>
                                     
@@ -366,7 +378,7 @@
                             </div>
                             <div class="course-content">
                                 <div class="course-meta">
-                                    <span class="duration"><i class="ri-time-line"></i> 3 Months</span>
+                                    <span class="duration"><i class="ri-time-line"></i> 6 Months</span>
                                 </div>
                                 <h3>Cloud Computing</h3>
                                 <p>AWS, Azure, Docker, and Kubernetes mastery.</p>
@@ -465,7 +477,7 @@
                             </div>
                             <div class="course-content">
                                 <div class="course-meta">
-                                    <span class="duration"><i class="ri-time-line"></i> 4 Months</span>
+                                    <span class="duration"><i class="ri-time-line"></i> 6 Months</span>
                                 </div>
                                 <h3>Cyber Security</h3>
                                 <p>Learn ethical hacking, network security, and cryptography.</p>
@@ -485,7 +497,7 @@
                             </div>
                             <div class="course-content">
                                 <div class="course-meta">
-                                    <span class="duration"><i class="ri-time-line"></i> 2 Months</span>
+                                    <span class="duration"><i class="ri-time-line"></i> 3 Months</span>
                                 </div>
                                 <h3>Prompt Engineering</h3>
                                 <p>Master LLMs, AI agents, and advanced prompting techniques.</p>
@@ -690,6 +702,69 @@
                     </div>
                 </div>
             </section>
+            <!-- Contact Form Section -->
+            <section class="contact-section section-padding" id="contact-us">
+                <div class="container">
+                    <div class="section-header fade-up">
+                        <h2 class="section-title">Get In <span class="text-gradient">Touch</span></h2>
+                        <p class="section-desc">Have a project in mind or want to join our training? Drop us a message.</p>
+                    </div>
+                    
+                    <div class="contact-form-wrapper glass-card fade-up">
+                        <form action="https://api.web3forms.com/submit" method="POST" id="main-contact-form">
+                            <!-- Web3Forms Access Key Placeholder -->
+                            <input type="hidden" name="access_key" value="e92d6a90-1b7f-4795-81ce-b2237bc1adb8">
+                            
+                            <div class="form-grid">
+                                <div class="input-group-3d">
+                                    <i class="ri-user-line input-icon"></i>
+                                    <input type="text" name="name" placeholder="Full Name" required>
+                                    <div class="input-border"></div>
+                                </div>
+                                
+                                <div class="input-group-3d">
+                                    <i class="ri-mail-line input-icon"></i>
+                                    <input type="email" name="email" placeholder="Email Address" required>
+                                    <div class="input-border"></div>
+                                </div>
+                                
+                                <div class="input-group-3d">
+                                    <i class="ri-phone-line input-icon"></i>
+                                    <input type="tel" name="phone" placeholder="Phone Number">
+                                    <div class="input-border"></div>
+                                </div>
+                                
+                                <div class="input-group-3d">
+                                    <i class="ri-briefcase-line input-icon"></i>
+                                    <select name="interest" class="glass-select" required>
+                                        <option value="" disabled selected>I am interested in...</option>
+                                        <option value="Software Development">Software Development Services</option>
+                                        <option value="IT Training">IT Training & Courses</option>
+                                        <option value="Internship">Internship</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <div class="input-border"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="input-group-3d message-group">
+                                <i class="ri-message-2-line input-icon" style="top: 20px;"></i>
+                                <textarea name="message" placeholder="Your Message..." rows="4" required></textarea>
+                                <div class="input-border"></div>
+                            </div>
+                            
+                            <!-- Custom Redirect on Success -->
+                            <input type="hidden" name="redirect" value="https://web3forms.com/success">
+
+                            <button type="submit" class="submit-btn-3d w-100" style="margin-top: 20px;">
+                                <span>Send Message</span>
+                                <i class="ri-send-plane-fill"></i>
+                                <div class="submit-glow-sweep"></div>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
 
             <!-- Footer -->
             <footer class="footer pb-0" id="contact">
@@ -742,6 +817,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
-    <script src="script.js"></script>
+    <script src="script.js?v=4"></script>
 </body>
 </html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Coming Soon | Digital Byte Solutions</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css?v=4">
+    
+    <style>
+        .coming-soon-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+            padding: 20px;
+        }
+        
+        .coming-soon-card {
+            max-width: 600px;
+            text-align: center;
+            padding: 60px 40px;
+            background: rgba(20, 20, 20, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .coming-soon-icon {
+            font-size: 4rem;
+            color: #38BDF8;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #38BDF8, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse-icon 2s infinite ease-in-out;
+        }
+        
+        .coming-soon-title {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .coming-soon-desc {
+            color: rgba(255,255,255,0.7);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .back-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        
+        @keyframes pulse-icon {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body style="background: #050505;">
+    
+    <!-- Background elements -->
+    <div class="video-overlay" style="background: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.1), transparent 70%);"></div>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    
+    <div class="coming-soon-wrapper">
+        <div class="coming-soon-card">
+            <div class="card-glow"></div>
+            <i class="ri-rocket-2-fill coming-soon-icon"></i>
+            <h1 class="coming-soon-title"><span class="text-gradient">Student Dashboard</span></h1>
+            <p class="coming-soon-desc">We are crafting something amazing! The student portal is currently under active development. You'll be able to access your courses, assignments, and certificates here very soon.</p>
+            
+            <a href="index.html" class="back-btn">
+                <i class="ri-arrow-left-line"></i>
+                Back to Home
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

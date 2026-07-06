@@ -493,25 +493,23 @@ if (loginForm) {
             return;
         }
 
-        // Simulate network request (Fast response!)
+        // Simulate network request (More realistic delay)
         submitBtn.innerHTML = '<span><i class="ri-loader-4-line ri-spin"></i> Authenticating...</span>';
-        submitBtn.style.opacity = '0.8';
-        submitBtn.style.pointerEvents = 'none';
-
         setTimeout(() => {
-            showToast('Welcome Back!', 'Authentication successful. Redirecting to dashboard...', 'success');
+            // Fake Login for everyone (Showcase mode)
+            showToast('Welcome!', 'Authentication successful. Redirecting to dashboard...', 'success');
             submitBtn.innerHTML = '<span><i class="ri-check-line"></i> Success</span>';
             submitBtn.style.background = '#10B981';
             
-            // Reset after 1.5s
+            // Clear the form immediately
+            loginForm.reset();
+            
+            // Simulate a page redirect to the Coming Soon page after 1.5 seconds
             setTimeout(() => {
-                loginForm.reset();
-                submitBtn.innerHTML = originalText;
-                submitBtn.style.opacity = '1';
-                submitBtn.style.pointerEvents = 'auto';
-                submitBtn.style.background = '';
+                window.location.href = 'dashboard-coming-soon.html';
             }, 1500);
-        }, 100);
+            
+        }, 300); // Reduced delay for faster response
     });
 }
 
@@ -593,4 +591,86 @@ if (aiInputWrapper) {
             window.speechSynthesis.speak(utterance);
         }
     }
+}
+
+// 3. Handle Main Contact Form via AJAX
+const contactForm = document.getElementById('main-contact-form');
+if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const submitBtn = contactForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        
+        // Change button state
+        submitBtn.innerHTML = '<span><i class="ri-loader-4-line ri-spin"></i> Sending...</span>';
+        submitBtn.style.opacity = '0.8';
+        submitBtn.style.pointerEvents = 'none';
+
+        const formData = new FormData(contactForm);
+        
+        fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            body: formData
+        })
+        .then(async (response) => {
+            let json = await response.json();
+            if (response.status == 200) {
+                // Success
+                showToast('Message Sent!', 'Thank you for reaching out. We will get back to you shortly.', 'success');
+                contactForm.reset(); // Clear the form!
+            } else {
+                console.log(response);
+                showToast('Error', json.message || 'Something went wrong!', 'error');
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            showToast('Error', 'Failed to send message. Please try again later.', 'error');
+        })
+        .finally(() => {
+            // Restore button
+            submitBtn.innerHTML = originalText;
+            submitBtn.style.opacity = '1';
+            submitBtn.style.pointerEvents = 'auto';
+        });
+    });
+}
+
+// 4. Handle Login Form Interactivity (Password Toggle, Forgot, Remember)
+// Run directly without DOMContentLoaded since script is at the bottom
+const togglePassword = document.querySelector('.password-toggle');
+const passwordInput = document.getElementById('login-password');
+if (togglePassword && passwordInput) {
+    togglePassword.addEventListener('click', function (e) {
+        e.preventDefault();
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.classList.toggle('ri-eye-off-line');
+        this.classList.toggle('ri-eye-line');
+    });
+}
+
+// Forgot Password Link
+const forgotLink = document.querySelector('.forgot-link');
+if (forgotLink) {
+    forgotLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        const emailField = document.querySelector('.glass-login-card input[type="email"]');
+        if (emailField && emailField.value) {
+            showToast('Reset Link Sent', `If ${emailField.value} exists, you will receive a reset link.`, 'info');
+        } else {
+            showToast('Action Required', 'Please enter your email address first to reset password.', 'info');
+        }
+    });
+}
+
+// Remember Me Checkbox
+const rememberCheckbox = document.querySelector('.checkbox-container input[type="checkbox"]');
+if (rememberCheckbox) {
+    rememberCheckbox.addEventListener('change', function() {
+        if (this.checked) {
+            showToast('Device Remembered', 'You will stay logged in on this device for 30 days.', 'success');
+        }
+    });
 }

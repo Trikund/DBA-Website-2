@@ -858,12 +858,12 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center;
     align-items: center;
     gap: 10px;
-    transform: translateZ(50px);
+    transform: none; /* Fixed 3D hit area bug */
     transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .submit-btn-3d:hover {
-    transform: translateZ(60px) translateY(-2px);
+    transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
 }
 
@@ -2005,4 +2005,43 @@ h1, h2, h3, h4, h5, h6 {
 .location-text span {
     display: block;
     margin-top: 4px;
+}
+/* Contact Form Styles */
+.contact-section { position: relative; z-index: 10; }
+.contact-form-wrapper { padding: 40px; max-width: 800px; margin: 0 auto; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+@media (max-width: 768px) { .form-grid { grid-template-columns: 1fr; } }
+.glass-select { 
+    width: 100%; padding: 16px 20px 16px 50px; background: rgba(255, 255, 255, 0.03); 
+    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: #fff; 
+    font-family: inherit; font-size: 0.95rem; appearance: none;
+}
+.glass-select option { background: #0f172a; color: #fff; }
+.message-group textarea {
+    width: 100%; padding: 16px 20px 16px 50px; background: rgba(255, 255, 255, 0.03); 
+    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: #fff; 
+    font-family: inherit; font-size: 0.95rem; resize: vertical; min-height: 120px;
+}
+.message-group textarea:focus, .glass-select:focus { outline: none; border-color: rgba(97, 218, 251, 0.5); background: rgba(255, 255, 255, 0.05); }
+
+/* Shake Animation for Login Error */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+}
+.shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+/* Fix clickability of bottom login elements */
+.form-options, .submit-btn-3d {
+    position: relative;
+    z-index: 100;
+}
+.checkbox-container, .forgot-link {
+    cursor: pointer;
+    position: relative;
+    z-index: 101;
 }
