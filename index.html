@@ -25,9 +25,19 @@
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     
     <!-- CSS -->
-    <link rel="stylesheet" href="style.css?v=4">
+    <link rel="stylesheet" href="style.css?v=5">
 </head>
 <body>
+
+    <!-- Top Announcement Banner -->
+    <div class="top-banner" id="topBanner">
+        <div class="banner-content">
+            <i class="ri-flashlight-fill" style="color: #F59E0B;"></i> 
+            <span>Hurry! Flat <span class="highlight">20% Off</span> on Upcoming MERN Stack & AI Batches. Limited Seats Available! Call: <span class="highlight">+91 9927953123</span></span>
+        </div>
+        <button id="closeBanner" aria-label="Close Announcement"><i class="ri-close-line"></i></button>
+    </div>
+
     
     <!-- Scroll Progress -->
     <div class="scroll-progress"></div>
@@ -65,8 +75,9 @@
     <!-- Navigation -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="#" class="logo" style="display: flex; align-items: center;">
-                <img src="logo.png" alt="Digital Byte Solutions Logo" class="navbar-logo">
+                        <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+                <img src="logo.png" alt="Digital Byte Solutions Logo" class="navbar-logo" style="max-height: 45px;">
+                <div class="logo-text" style="font-size: 1.6rem; font-weight: 700; color: var(--text-main); margin: 0; line-height: 1;">Digital<span class="text-gradient" style="background: linear-gradient(135deg, #38BDF8, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Byte</span></div>
             </a>
             <div class="nav-links">
                 <a href="#about" class="nav-link">About</a>
@@ -77,7 +88,12 @@
                 <a href="#contact" class="nav-link">Contact</a>
             </div>
             <div class="nav-actions">
+
+                <button id="theme-toggle" aria-label="Toggle Dark/Light Mode">
+                    <i class="ri-moon-line"></i>
+                </button>
                 <button class="magnetic-btn btn-primary" id="contact-btn">
+
                     <span class="btn-text">Get Started</span>
                 </button>
                 <button class="mobile-menu-btn">
@@ -126,7 +142,7 @@
                                 <span class="btn-ultra-text">Start Building</span>
                                 <div class="btn-ultra-glow"></div>
                             </button>
-                            <button class="btn-ultra secondary-ultra">
+                            <button class="btn-ultra secondary-ultra" id="watchShowreelBtn">
                                 <i class="ri-play-circle-fill"></i>
                                 <span class="btn-ultra-text">Watch Showreel</span>
                             </button>
@@ -321,6 +337,31 @@
 
 
 
+
+            <!-- Animated Stats Section -->
+            <section class="stats-section" id="stats">
+                <div class="container">
+                    <div class="stats-grid">
+                        <div class="stat-item fade-up">
+                            <h3 class="counter" data-target="1500">0</h3>
+                            <p>Students Trained</p>
+                        </div>
+                        <div class="stat-item fade-up" style="transition-delay: 0.1s;">
+                            <h3 class="counter" data-target="50">0</h3>
+                            <p>Hiring Partners</p>
+                        </div>
+                        <div class="stat-item fade-up" style="transition-delay: 0.2s;">
+                            <h3 class="counter" data-target="100">0</h3>
+                            <p>Placement Assistance %</p>
+                        </div>
+                        <div class="stat-item fade-up" style="transition-delay: 0.3s;">
+                            <h3 class="counter" data-target="4.8">0</h3>
+                            <p>Average Rating</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Courses Section -->
             <section class="courses section-padding" id="courses">
                 <div class="container">
@@ -345,7 +386,7 @@
                                 <div class="course-actions">
                                     <a href="#contact" class="magnetic-btn btn-sm btn-primary"><span class="btn-text">Details</span></a>
                                     <a href="MERN Full Stack Development.html" target="_blank" class="magnetic-btn btn-sm btn-outline" title="Preview Brochure"><i class="ri-eye-line"></i></a>
-                                    <a href="MERN Full Stack Development.html" download="MERN_Full_Stack_Brochure.html" class="magnetic-btn btn-sm btn-outline" title="Download Brochure"><i class="ri-download-cloud-2-line"></i></a>
+                                    <a href="MERN_Full_Stack_Brochure.html" download="MERN_Full_Stack_Brochure.html" class="magnetic-btn btn-sm btn-outline" title="Download Brochure"><i class="ri-download-cloud-2-line"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -390,7 +431,7 @@
                             </div>
                         </div>
                         <!-- Course 4 -->
-                        <div class="course-card glass-card fade-up" style="transition-delay: 0.3s">
+                        <div class="course-card glass-card fade-up hidden-course" style="display: none;" style="transition-delay: 0.3s">
                             <div class="course-image">
                                 <div class="course-glow bg-blue"></div>
                                 <i class="ri-database-2-line course-icon text-blue"></i>
@@ -410,7 +451,7 @@
                         </div>
 
                         <!-- Course 5 -->
-                        <div class="course-card glass-card fade-up" style="transition-delay: 0.4s">
+                        <div class="course-card glass-card fade-up hidden-course" style="display: none;" style="transition-delay: 0.4s">
                             <div class="course-image">
                                 <div class="course-glow bg-cyan"></div>
                                 <i class="ri-code-box-line course-icon text-cyan"></i>
@@ -430,7 +471,7 @@
                         </div>
 
                         <!-- Course 6 -->
-                        <div class="course-card glass-card fade-up" style="transition-delay: 0.5s">
+                        <div class="course-card glass-card fade-up hidden-course" style="display: none;" style="transition-delay: 0.5s">
                             <div class="course-image">
                                 <div class="course-glow bg-purple"></div>
                                 <i class="ri-java-line course-icon text-purple"></i>
@@ -450,7 +491,7 @@
                         </div>
 
                         <!-- Course 7 -->
-                        <div class="course-card glass-card fade-up" style="transition-delay: 0.6s">
+                        <div class="course-card glass-card fade-up hidden-course" style="display: none;" style="transition-delay: 0.6s">
                             <div class="course-image">
                                 <div class="course-glow bg-blue"></div>
                                 <i class="ri-angularjs-line course-icon text-blue"></i>
@@ -470,7 +511,7 @@
                         </div>
 
                         <!-- Course 8 -->
-                        <div class="course-card glass-card fade-up" style="transition-delay: 0.7s">
+                        <div class="course-card glass-card fade-up hidden-course" style="display: none;" style="transition-delay: 0.7s">
                             <div class="course-image">
                                 <div class="course-glow bg-cyan"></div>
                                 <i class="ri-shield-keyhole-line course-icon text-cyan"></i>
@@ -490,7 +531,7 @@
                         </div>
 
                         <!-- Course 9 -->
-                        <div class="course-card glass-card fade-up" style="transition-delay: 0.8s">
+                        <div class="course-card glass-card fade-up hidden-course" style="display: none;" style="transition-delay: 0.8s">
                             <div class="course-image">
                                 <div class="course-glow bg-purple"></div>
                                 <i class="ri-terminal-box-line course-icon text-purple"></i>
@@ -509,8 +550,130 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="text-center mt-5" style="margin-top: 50px; text-align: center; display: flex; justify-content: center;">
+                        <button id="seeMoreCoursesBtn" class="magnetic-btn btn-outline" style="padding: 15px 40px; font-size: 1.1rem; border-radius: 50px; display: inline-flex; align-items: center; gap: 10px;">
+                            <i class="ri-arrow-down-s-line"></i> <span>View All Courses</span>
+                        </button>
+                    </div>
                 </div>
             </section>
+
+            <!-- Upcoming Batches / FOMO Section -->
+            <section class="batches-section section-padding pb-0" id="batches">
+                <div class="container">
+                    <div class="section-header text-center fade-up">
+                        <span class="subtitle">Hurry Up!</span>
+                        <h2 class="title text-gradient">Upcoming Batches</h2>
+                        <p class="desc">Secure your seat before the batches fill up!</p>
+                    </div>
+                    
+                    <div class="batches-grid">
+                        <div class="batch-card glass-card fade-up">
+                            <div class="batch-date">15<br><span>AUG</span></div>
+                            <div class="batch-info">
+                                <h3>MERN Full Stack</h3>
+                                <p><i class="ri-time-line"></i> Weekend Batch (Sat-Sun)</p>
+                            </div>
+                            <div class="batch-status">
+                                <span class="pulse-dot"></span> Only 4 Seats Left
+                            </div>
+                            <button class="magnetic-btn btn-sm btn-primary" onclick="document.getElementById('contact-us').scrollIntoView();">Enroll Now</button>
+                        </div>
+                        
+                        <div class="batch-card glass-card fade-up" style="transition-delay: 0.1s">
+                            <div class="batch-date">20<br><span>AUG</span></div>
+                            <div class="batch-info">
+                                <h3>Data Science & AI</h3>
+                                <p><i class="ri-time-line"></i> Weekday Batch (Mon-Fri)</p>
+                            </div>
+                            <div class="batch-status orange">
+                                <span class="pulse-dot"></span> Only 2 Seats Left
+                            </div>
+                            <button class="magnetic-btn btn-sm btn-primary" onclick="document.getElementById('contact-us').scrollIntoView();">Enroll Now</button>
+                        </div>
+                        
+                        <div class="batch-card glass-card fade-up" style="transition-delay: 0.2s">
+                            <div class="batch-date">05<br><span>SEP</span></div>
+                            <div class="batch-info">
+                                <h3>Cyber Security</h3>
+                                <p><i class="ri-time-line"></i> Evening Batch</p>
+                            </div>
+                            <div class="batch-status green">
+                                <span class="pulse-dot"></span> Filling Fast
+                            </div>
+                            <button class="magnetic-btn btn-sm btn-primary" onclick="document.getElementById('contact-us').scrollIntoView();">Enroll Now</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ROI / Salary Predictor Calculator Section -->
+            <section class="salary-predictor-section section-padding" id="roi-calculator">
+                <div class="container">
+                    <div class="section-header fade-up">
+                        <h2 class="section-title">AI Salary <span class="text-gradient">Predictor</span></h2>
+                        <p class="section-desc">Discover your earning potential based on real market data. Select your track and experience level.</p>
+                    </div>
+                    
+                    <div class="calculator-wrapper glass-card fade-up ai-theme">
+                        <div class="calc-grid">
+                            <!-- Inputs -->
+                            <div class="calc-inputs">
+                                <div class="input-group-3d">
+                                    <label><i class="ri-macbook-line text-gradient"></i> Target Role / Course</label>
+                                    <select id="calc-course" class="glass-select ai-select">
+                                        <option value="mern">⚡ MERN Full Stack Developer</option>
+                                        <option value="python">🐍 Python / Django Developer</option>
+                                        <option value="java">☕ Java Full Stack Developer</option>
+                                        <option value="ai">🤖 AI / ML Engineer</option>
+                                        <option value="data">📊 Data Scientist</option>
+                                        <option value="cyber">🛡️ Cyber Security Analyst</option>
+                                    </select>
+                                    <div class="input-border"></div>
+                                </div>
+                                
+                                <div class="input-group-3d mt-4">
+                                    <label><i class="ri-bar-chart-grouped-line text-gradient"></i> Experience Level: <span id="exp-val" class="text-gradient font-bold">0 Years (Fresher)</span></label>
+                                    <input type="range" id="calc-exp" min="0" max="10" value="0" class="glass-slider premium-slider">
+                                    <div class="slider-marks">
+                                        <span>0</span>
+                                        <span>5</span>
+                                        <span>10+</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Output -->
+                            <div class="calc-output">
+                                <div class="output-glow-box ai-glow-box">
+                                    
+                                    <div class="chart-bars-bg">
+                                        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                                    </div>
+                                    <h4 class="ai-glow-text"><i class="ri-magic-line"></i> Expected Salary (India)</h4>
+                                    <div class="salary-range" id="salary-result">
+                                        <span class="currency">₹</span><span id="sal-min" class="number counter">3.5</span> - <span class="currency">₹</span><span id="sal-max" class="number counter">5.0</span> <span class="unit">LPA</span>
+                                    </div>
+                                    <p class="disclaimer">*Based on real-time market data analysis.</p>
+                                    <div class="roadmap-action-group mt-4">
+                                        <button id="view-roadmap-btn" class="magnetic-btn btn-sm btn-outline w-100 mb-3" style="border-color: rgba(56, 189, 248, 0.5);"><span class="btn-text"><i class="ri-map-pin-line"></i> View Course Roadmap</span></button>
+                                        <a href="#contact-us" class="magnetic-btn btn-sm btn-primary w-100 ai-action-btn"><span class="btn-text">Start Earning Today <i class="ri-arrow-right-line"></i></span></a>
+                                    </div>
+                                    <!-- Roadmap Display Area (Hidden by default) -->
+                                    <div id="roadmap-container" class="roadmap-container" style="display: none; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 15px;">
+                                        <h5 id="roadmap-title" class="text-gradient mb-3" style="font-size: 16px;">MERN Stack Roadmap</h5>
+                                        <ul id="roadmap-steps" class="roadmap-steps">
+                                            <!-- Steps will be injected by JS -->
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Placement Section -->
             <!-- Career Section (Placements + Soft Skills) -->
             <section class="career-section section-padding" id="placement">
@@ -702,6 +865,109 @@
                     </div>
                 </div>
             </section>
+            <!-- FAQ Section -->
+            <section class="faq-section section-padding" id="faq">
+                <div class="container">
+                    <div class="section-header text-center fade-up">
+                        <span class="subtitle">Got Questions?</span>
+                        <h2 class="title text-gradient">Frequently Asked Questions</h2>
+                        <p class="desc">Everything you need to know about learning at DBA.</p>
+                    </div>
+                    
+                    <div class="faq-accordion fade-up">
+                        <div class="faq-item">
+                            <button class="faq-question">
+                                <span>Do you offer placement assistance?</span>
+                                <i class="ri-add-line"></i>
+                            </button>
+                            <div class="faq-answer">
+                                <p>Absolutely! We provide 100% placement assistance. Our dedicated placement cell helps with resume building, mock interviews, and connecting you with our 50+ hiring partners.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <button class="faq-question">
+                                <span>Are there EMI options available?</span>
+                                <i class="ri-add-line"></i>
+                            </button>
+                            <div class="faq-answer">
+                                <p>Yes, we offer flexible No-Cost EMI options starting from as low as ₹2000/month so you can focus on learning without financial stress.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <button class="faq-question">
+                                <span>Can non-IT students join these courses?</span>
+                                <i class="ri-add-line"></i>
+                            </button>
+                            <div class="faq-answer">
+                                <p>Yes! Our courses are designed from scratch. Whether you are from B.Com, BA, or any other background, we teach you from the absolute basics to advanced levels.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="faq-item">
+                            <button class="faq-question">
+                                <span>Will I get practical project experience?</span>
+                                <i class="ri-add-line"></i>
+                            </button>
+                            <div class="faq-answer">
+                                <p>100%. Our curriculum is project-based. You won't just learn theory; you will build real-world applications (like E-commerce clones, AI models, etc.) that you can showcase in your portfolio.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+            <!-- Testimonials Section -->
+            <section class="testimonials-section section-padding" id="testimonials">
+                <div class="container">
+                    <div class="section-header text-center fade-up">
+                        <span class="subtitle">Success Stories</span>
+                        <h2 class="title text-gradient">What Our Students Say</h2>
+                        <p class="desc">Join hundreds of successful alumni working in top tech companies.</p>
+                    </div>
+                    
+                    <div class="testimonials-grid">
+                        <div class="testimonial-card glass-card fade-up">
+                            <i class="ri-double-quotes-r quote-icon"></i>
+                            <div class="test-header">
+                                <div class="test-avatar">R</div>
+                                <div class="test-info">
+                                    <h4>Rahul Sharma</h4>
+                                    <span>Placed at TCS @ 8 LPA</span>
+                                </div>
+                            </div>
+                            <p class="test-text">"The MERN Stack course at DBA changed my life. The practical project-based approach helped me crack the TCS interview easily. Best institute in Dehradun!"</p>
+                        </div>
+                        
+                        <div class="testimonial-card glass-card fade-up" style="transition-delay: 0.1s">
+                            <i class="ri-double-quotes-r quote-icon"></i>
+                            <div class="test-header">
+                                <div class="test-avatar">P</div>
+                                <div class="test-info">
+                                    <h4>Priya Singh</h4>
+                                    <span>Placed at Infosys @ 6.5 LPA</span>
+                                </div>
+                            </div>
+                            <p class="test-text">"I was from a non-IT background, but their Data Science training was so beginner-friendly yet advanced. The trainers are extremely supportive."</p>
+                        </div>
+                        
+                        <div class="testimonial-card glass-card fade-up" style="transition-delay: 0.2s">
+                            <i class="ri-double-quotes-r quote-icon"></i>
+                            <div class="test-header">
+                                <div class="test-avatar">A</div>
+                                <div class="test-info">
+                                    <h4>Aman Verma</h4>
+                                    <span>Placed at Wipro @ 7 LPA</span>
+                                </div>
+                            </div>
+                            <p class="test-text">"The placement assistance is real! They didn't just teach me Cloud Computing, but also helped build a solid resume and took multiple mock interviews."</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Contact Form Section -->
             <section class="contact-section section-padding" id="contact-us">
                 <div class="container">
@@ -787,6 +1053,7 @@
                             <a href="#services">Services</a>
                             <a href="#programs">Programs</a>
                             <a href="#projects">Careers</a>
+                            <a href="verify.html">Verify Certificate</a>
                         </div>
 
                         <div class="footer-links footer-contact fade-up" style="transition-delay: 0.2s">
@@ -813,10 +1080,153 @@
         </div>
     </main>
 
+    <!-- Interactive Floating WhatsApp Widget -->
+    <a href="https://wa.me/919876543210?text=Hello%20Digital%20Byte%20Solutions,%20I%20am%20interested%20in%20your%20services." target="_blank" class="whatsapp-float-interactive">
+        <div class="whatsapp-icon-wrapper">
+            <i class="ri-whatsapp-line"></i>
+            <span class="notification-dot">1</span>
+        </div>
+        <span class="whatsapp-text">Chat with us!</span>
+    </a>
+
+    <!-- Showreel Dashboard Modal -->
+    <div class="showreel-modal" id="showreelModal">
+        <div class="showreel-overlay" id="showreelOverlay"></div>
+        <div class="showreel-dashboard">
+            <button class="close-showreel" id="closeShowreel"><i class="ri-close-line"></i></button>
+            <div class="showreel-header">
+                <h2><i class="ri-vidicon-line"></i> Digital Byte Studio</h2>
+                <p>Discover our latest projects and success stories</p>
+            </div>
+            <div class="showreel-content">
+                <div class="main-video-container">
+                    <!-- Interactive Code Showreel -->
+                    <div class="code-showreel-window">
+                        <div class="code-window-header">
+                            <div class="mac-btns"><span></span><span></span><span></span></div>
+                            <div class="code-title" id="showreelTitle">student_placement.py</div>
+                        </div>
+                        <div class="code-window-body">
+                            <pre><code id="showreelCode"></code><span class="cursor-blink">|</span></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-sidebar">
+                    <h3>Up Next</h3>
+                    <div class="video-thumb active" data-type="placement">
+                        <div class="thumb-img" style="background: linear-gradient(135deg, #38BDF8, #8B5CF6); display: flex; align-items: center; justify-content: center; font-size: 24px;"><i class="ri-briefcase-line"></i></div>
+                        <div class="thumb-info">
+                            <h4>Student Placements</h4>
+                            <p>Python AI Model</p>
+                        </div>
+                    </div>
+                    <div class="video-thumb" data-type="campus">
+                        <div class="thumb-img" style="background: linear-gradient(135deg, #10B981, #38BDF8); display: flex; align-items: center; justify-content: center; font-size: 24px;"><i class="ri-building-2-line"></i></div>
+                        <div class="thumb-info">
+                            <h4>Campus Tour</h4>
+                            <p>3D WebGL HTML</p>
+                        </div>
+                    </div>
+                    <div class="video-thumb" data-type="alumni">
+                        <div class="thumb-img" style="background: linear-gradient(135deg, #F59E0B, #EF4444); display: flex; align-items: center; justify-content: center; font-size: 24px;"><i class="ri-group-line"></i></div>
+                        <div class="thumb-info">
+                            <h4>Alumni Success</h4>
+                            <p>React Dashboard</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Exit Intent Popup -->
+
+    <!-- WhatsApp Floating Widget -->
+    <a href="https://wa.me/919927953123?text=Hi%20Digital%20Byte%20Academy!%20I%20want%20to%20know%20more%20about%20your%20courses." class="whatsapp-float" target="_blank" title="Chat with us on WhatsApp">
+        <i class="ri-whatsapp-line"></i>
+    </a>
+
+    <div id="exitPopup" class="brochure-modal-overlay">
+        <div class="brochure-modal-content glass-login-card" style="text-align: center;">
+            <button id="closeExitPopup" class="close-modal-btn"><i class="ri-close-line"></i></button>
+            <div class="modal-header">
+                <i class="ri-gift-fill modal-icon" style="color: #F59E0B;"></i>
+                <h3>Wait! Don't Leave Just Yet.</h3>
+                <p>Book a <strong style="color: #38BDF8;">FREE 1-on-1 Counseling Session</strong> before you go.</p>
+            </div>
+            <form id="exit-form" class="modal-form" style="display: flex; flex-direction: column; gap: 15px;">
+                <input type="hidden" name="access_key" value="e92d6a90-1b7f-4795-81ce-b2237bc1adb8">
+                <input type="hidden" name="subject" value="Exit Intent - Free Counseling Request!">
+                
+                <div class="input-group-3d">
+                    <i class="ri-user-line input-icon"></i>
+                    <input type="text" name="name" placeholder="Your Name" required>
+                    <div class="input-border"></div>
+                </div>
+                
+                <div class="input-group-3d">
+                    <i class="ri-phone-line input-icon"></i>
+                    <input type="tel" name="phone" placeholder="WhatsApp Number" required pattern="[0-9]{10}">
+                    <div class="input-border"></div>
+                </div>
+                
+                <button type="submit" class="submit-btn-3d w-100" style="margin-top: 10px;">
+                    <span><i class="ri-calendar-check-line"></i> Book Free Session</span>
+                    <div class="submit-glow-sweep"></div>
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
-    <script src="script.js?v=4"></script>
+    <script src="script.js?v=5"></script>
+
+    <!-- Brochure Download Modal -->
+    <div id="brochureModal" class="brochure-modal-overlay">
+        <div class="brochure-modal-content glass-login-card">
+            <button id="closeBrochureModal" class="close-modal-btn"><i class="ri-close-line"></i></button>
+            <div class="modal-header">
+                <i class="ri-download-cloud-2-fill modal-icon"></i>
+                <h3>Download Course Brochure</h3>
+                <p>Please provide your details to get instant access to the syllabus & fee structure.</p>
+            </div>
+            <form id="brochure-form" class="modal-form" style="display: flex; flex-direction: column; gap: 15px;">
+                <input type="hidden" name="access_key" value="e92d6a90-1b7f-4795-81ce-b2237bc1adb8">
+                <input type="hidden" name="subject" value="New Brochure Download Request!">
+                <input type="hidden" name="from_name" value="Digital Byte Academy Brochure">
+                <!-- Autoresponse message (works if enabled in Web3Forms dashboard) -->
+                <input type="hidden" name="autoresponse" value="Thank you for downloading the brochure from Digital Byte Academy! Our counselor will reach out to you shortly to answer any questions.">
+                
+                <div class="input-group-3d">
+                    <i class="ri-user-line input-icon"></i>
+                    <input type="text" name="name" placeholder="Full Name" required>
+                    <div class="input-border"></div>
+                </div>
+                
+                <div class="input-group-3d">
+                    <i class="ri-mail-line input-icon"></i>
+                    <input type="email" name="email" placeholder="Email Address" required>
+                    <div class="input-border"></div>
+                </div>
+                
+                <div class="input-group-3d">
+                    <i class="ri-phone-line input-icon"></i>
+                    <input type="tel" name="phone" placeholder="Phone / WhatsApp Number" required pattern="[0-9]{10}">
+                    <div class="input-border"></div>
+                </div>
+                
+                <button type="submit" class="submit-btn-3d w-100" style="margin-top: 10px;">
+                    <span><i class="ri-download-2-line"></i> Download PDF Now</span>
+                    <div class="submit-glow-sweep"></div>
+                </button>
+                <p class="privacy-note" style="margin-top: 5px;"><i class="ri-shield-check-line"></i> Your data is 100% secure with us.</p>
+            </form>
+        </div>
+    </div>
+
 </body>
 </html>

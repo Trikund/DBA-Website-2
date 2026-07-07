@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Certificate - Digital Byte Academy</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        .verify-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 20px 50px;
+            position: relative;
+        }
+
+        .verify-card {
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .verify-icon {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.4));
+        }
+
+        .verify-card h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--text-light);
+        }
+
+        .verify-card p {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        #verify-result {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 15px;
+            animation: slideUp 0.4s ease forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .verify-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+
+        .verify-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+        }
+
+        .cert-details {
+            text-align: left;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-light);
+        }
+        
+        .cert-details p {
+            margin: 5px 0;
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+        .cert-details span {
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="noise"></div>
+    <div class="glow-orb" style="top: -20%; left: -10%;"></div>
+    <div class="glow-orb" style="bottom: -20%; right: -10%; background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0) 70%);"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="nav-container">
+                        <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 12px; text-decoration: none;">
+                <img src="logo.png" alt="Digital Byte Solutions Logo" class="navbar-logo" style="max-height: 45px;">
+                <div class="logo-text" style="font-size: 1.6rem; font-weight: 700; color: var(--text-main); margin: 0; line-height: 1;">Digital<span class="text-gradient" style="background: linear-gradient(135deg, #38BDF8, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Byte</span></div>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="magnetic-btn btn-sm btn-outline">Back to Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Verify Section -->
+    <section class="verify-section">
+        <div class="verify-card glass-login-card">
+            <i class="ri-verified-badge-line verify-icon"></i>
+            <h1>Verify Certificate</h1>
+            <p>Enter the Certificate ID to verify a student's credentials from Digital Byte Academy.</p>
+            
+            <form id="verify-form" class="modal-form" style="display: flex; flex-direction: column; gap: 15px;">
+                <div class="input-group-3d">
+                    <i class="ri-barcode-box-line input-icon"></i>
+                    <input type="text" id="cert-id" placeholder="e.g., DBA-2026-XXXX" required>
+                    <div class="input-border"></div>
+                </div>
+                
+                <button type="submit" class="submit-btn-3d w-100" style="margin-top: 10px;">
+                    <span><i class="ri-search-line"></i> Verify Now</span>
+                    <div class="submit-glow-sweep"></div>
+                </button>
+            </form>
+
+            <div id="verify-result"></div>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById('verify-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const certId = document.getElementById('cert-id').value.trim().toUpperCase();
+            const resultBox = document.getElementById('verify-result');
+            const submitBtn = this.querySelector('button[type="submit"]');
+            
+            // Show loading
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span><i class="ri-loader-4-line ri-spin"></i> Checking Database...</span>';
+            submitBtn.disabled = true;
+            resultBox.style.display = 'none';
+            resultBox.className = '';
+
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+                
+                // Simulated Logic: Any ID starting with 'DBA' is marked valid for demo purposes
+                if(certId.startsWith('DBA-')) {
+                    resultBox.className = 'verify-success';
+                    resultBox.innerHTML = `
+                        <i class="ri-checkbox-circle-fill" style="font-size: 2rem;"></i>
+                        <h3 style="margin: 10px 0;">Certificate Verified</h3>
+                        <p style="color: inherit; margin:0;">This is an authentic Digital Byte Academy certificate.</p>
+                        <div class="cert-details">
+                            <p><span>Student Name:</span> Verified Alumnus</p>
+                            <p><span>Course:</span> Full Stack Development</p>
+                            <p><span>Grade:</span> A+</p>
+                            <p><span>Issue Date:</span> ${new Date().toLocaleDateString()}</p>
+                        </div>
+                    `;
+                } else {
+                    resultBox.className = 'verify-error';
+                    resultBox.innerHTML = `
+                        <i class="ri-error-warning-fill" style="font-size: 2rem;"></i>
+                        <h3 style="margin: 10px 0;">Verification Failed</h3>
+                        <p style="color: inherit; margin:0;">The Certificate ID "${certId}" could not be found in our records.</p>
+                    `;
+                }
+                
+                resultBox.style.display = 'block';
+            }, 1200);
+        });
+    </script>
+</body>
+</html>
