@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
+const role = require('../middleware/role');
 const Content = require('../models/Content');
 
 // @route   POST /api/content
 // @desc    Add new course content (Trainer/Admin)
 // @access  Private
-router.post('/', auth, async (req, res) => {
+router.post('/', auth, role(['admin', 'trainer']), async (req, res) => {
     try {
         if (req.user.role !== 'trainer' && req.user.role !== 'admin') {
             return res.status(403).json({ msg: 'Not authorized to add content' });
@@ -48,7 +49,7 @@ router.get('/course/:courseId', auth, async (req, res) => {
 // @route   DELETE /api/content/:id
 // @desc    Delete content
 // @access  Private
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/:id', auth, role(['admin', 'trainer']), async (req, res) => {
     try {
         if (req.user.role !== 'trainer' && req.user.role !== 'admin') {
             return res.status(403).json({ msg: 'Not authorized' });
