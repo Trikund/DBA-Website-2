@@ -35,6 +35,7 @@ const createTransporter = async () => {
 const sendEmail = async ({ to, subject, html }) => {
     try {
         const transporter = await createTransporter();
+if (!transporter) return;
         const info = await transporter.sendMail({
             from: '"Digital Byte Academy" <noreply@digitalbyte.com>',
             to,
