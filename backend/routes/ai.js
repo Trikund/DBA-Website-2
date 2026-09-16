@@ -1,71 +1,115 @@
 const express = require('express');
 const router = express.Router();
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 router.post('/chat', async (req, res) => {
     try {
-        const { query } = req.body;
+        const { message } = req.body;
         
-        const systemPrompt = `You are Motion AI, a friendly and expert tech counselor for Digital Byte Academy. 
-Guide students about MERN, AI, Data Science, Cyber Security. 
-Points: 100% placement, 4-6 months duration, affordable fees.
-RULES:
-1. Speak STRICTLY in natural "Hinglish" (Hindi language written in English alphabet). DO NOT use JSON. DO NOT use Devanagari script.
-2. Keep it short (2-3 sentences max).
-3. Use 1-2 emojis.
-4. Be encouraging, use words like 'Bhai', 'Bilkul'.`;
-
-        const finalPrompt = systemPrompt + "\n\nUser Question: " + query;
-        
-        const API_KEY = process.env.GEMINI_API_KEY;
-        let aiResponseText = "";
-
-        if (API_KEY && API_KEY !== "YOUR_GEMINI_API_KEY_HERE") {
-            // Use Secure Gemini API from backend
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    contents: [{ role: "user", parts: [{ text: finalPrompt }] }],
-                    generationConfig: { maxOutputTokens: 300, temperature: 0.7 }
-                })
-            });
+        if (!process.env.GEMINI_API_KEY) {
+            const q = message.toLowerCase();
+            let reply = "I am running in offline mode (No GEMINI_API_KEY found). I can answer questions about MERN, React, Node, Python, Java, C++, AI, ML, SQL, MongoDB, HTML, CSS, JavaScript, RAG, and more! Add an API key for infinite knowledge. ✨";
             
-            if (response.ok) {
-                const data = await response.json();
-                aiResponseText = data.candidates[0].content.parts[0].text;
-            } else {
-                throw new Error("Gemini API Failed");
+            const techDictionary = {
+                "python": "Python is a high-level, versatile programming language heavily used in AI, Data Science, and backend development. Its simple syntax makes it very beginner-friendly!",
+                "react": "React is a popular JavaScript library for building user interfaces. It uses a Virtual DOM for ultra-fast rendering and is a core part of the MERN stack.",
+                "node": "Node.js is a runtime environment that allows you to run JavaScript on the server. It's built on Chrome's V8 engine and is incredibly fast for building APIs.",
+                "express": "Express.js is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications.",
+                "mongo": "MongoDB is a NoSQL database that stores data in flexible, JSON-like documents. It's highly scalable and perfectly integrates with Node.js.",
+                "sql": "SQL (Structured Query Language) is used for managing and querying relational databases. It's essential for handling structured data efficiently.",
+                "database": "A database is an organized collection of structured information. We teach both NoSQL (MongoDB) and Relational (SQL) databases in our courses.",
+                "java": "Java is a robust, object-oriented programming language used widely in enterprise software, Android development, and large-scale backend systems.",
+                "c++": "C++ is a high-performance programming language used in system/software development, game engines, and competitive programming.",
+                "javascript": "JavaScript is the programming language of the web. It allows you to implement complex features on web pages and is used on both frontend and backend.",
+                "html": "HTML is the standard markup language for documents designed to be displayed in a web browser. It provides the basic structure of a website.",
+                "css": "CSS is used for styling and formatting web pages. It controls the layout, colors, and overall visual appearance of HTML elements.",
+                "machine learning": "Machine Learning is a subset of AI where systems learn from data to identify patterns and make decisions with minimal human intervention.",
+                "ai": "Artificial Intelligence is the simulation of human intelligence by machines. Our AI course covers everything from basic algorithms to advanced LLMs.",
+                "rag": "RAG (Retrieval-Augmented Generation) is a technique where an AI fetches contextual information from an external database before generating an answer, preventing hallucinations.",
+                "mern": "The MERN stack (MongoDB, Express.js, React, Node.js) is a popular JavaScript stack used for building full-stack web applications efficiently.",
+                "full stack": "A Full Stack Developer can build both the frontend (user interface) and backend (server and database) of a web application.",
+                "data science": "Data Science involves extracting insights from vast amounts of data using statistics, scientific computing, and machine learning algorithms.",
+                "cyber": "Cyber Security is the practice of protecting systems, networks, and programs from digital attacks. It's one of our highly demanded premium courses.",
+                "fee": "Our courses are very affordable with flexible EMI options available. We focus on providing premium education and 100% placement assistance.",
+                "hi": "Hello! I am the AI counselor for Digital Byte Academy. How can I assist you with your tech journey today?",
+                "hello": "Hello! I am the AI counselor for Digital Byte Academy. How can I assist you with your tech journey today?",
+            };
+
+            for (const [key, val] of Object.entries(techDictionary)) {
+                if (q.includes(key)) {
+                    return res.json({ reply: val });
+                }
             }
-        } else {
-            // Fallback to Free Pollinations API
-            const url = `https://text.pollinations.ai/${encodeURIComponent(finalPrompt)}`;
-            const response = await fetch(url);
-            
-            if (response.ok) {
-                aiResponseText = await response.text();
-            } else {
-                throw new Error("Pollinations API Failed");
+
+            // If not in local dictionary, fetch infinite knowledge from Wikipedia API
+            try {
+                const https = require('https');
+                const searchOpts = {
+                    hostname: 'en.wikipedia.org',
+                    path: '/w/api.php?action=query&list=search&srsearch=' + encodeURIComponent(message) + '&utf8=&format=json',
+                    headers: { 'User-Agent': 'DigitalByteAcademy/1.0' }
+                };
+
+                const wikiReply = await new Promise((resolve, reject) => {
+                    https.get(searchOpts, (searchRes) => {
+                        let searchData = '';
+                        searchRes.on('data', c => searchData += c);
+                        searchRes.on('end', () => {
+                            try {
+                                const sr = JSON.parse(searchData).query.search;
+                                if (sr && sr.length > 0) {
+                                    const title = sr[0].title;
+                                    const summaryOpts = {
+                                        hostname: 'en.wikipedia.org',
+                                        path: '/api/rest_v1/page/summary/' + encodeURIComponent(title),
+                                        headers: { 'User-Agent': 'DigitalByteAcademy/1.0' }
+                                    };
+                                    https.get(summaryOpts, (sumRes) => {
+                                        let sumData = '';
+                                        sumRes.on('data', c => sumData += c);
+                                        sumRes.on('end', () => {
+                                            const extract = JSON.parse(sumData).extract;
+                                            resolve(extract ? extract + " ✨" : null);
+                                        });
+                                    }).on('error', err => reject(err));
+                                } else {
+                                    resolve(null);
+                                }
+                            } catch (e) {
+                                resolve(null);
+                            }
+                        });
+                    }).on('error', err => reject(err));
+                });
+
+                if (wikiReply) {
+                    return res.json({ reply: wikiReply });
+                }
+            } catch (err) {
+                console.error("Wikipedia API Fallback failed:", err);
             }
+
+            // Absolute last resort
+            return res.json({ reply: "I am running in offline mode (No GEMINI_API_KEY found). I couldn't find an exact answer for that, but you can ask me about MERN, React, Python, ML, Java, C++, etc.! ✨" });
         }
 
-        res.json({ success: true, reply: aiResponseText });
-
-    } catch (err) {
-        console.error("AI Error:", err.message);
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         
-        // Final Local Fallback if both APIs fail
-        const q = req.body.query ? req.body.query.toLowerCase() : "";
-        let fallbackReply = "Bhai, main samajh nahi paya! Par agar aap courses dhoondh rahe ho toh MERN, AI aur Data Science humare best courses hain. Kuch details batau? ✨";
+        const prompt = `You are a smart AI assistant for Digital Byte Academy. 
+        You MUST answer STRICTLY in English. Do NOT use Hindi or Hinglish.
+        You are allowed to answer any question in the world, tech or non-tech, but try to tie it back to learning and technology if possible.
+        Keep your response concise, helpful, and in 2-3 short paragraphs.
+        Student's message: ${message}`;
         
-        if(q.includes("mern") || q.includes("web")) {
-            fallbackReply = "Bhai, Web Dev (MERN Stack) ki bohot demand hai! 🔥 Humare 4-6 mahine ke course me aap frontend/backend master kar loge, 100% placement ke sath! 🚀";
-        } else if(q.includes("ai") || q.includes("data")) {
-            fallbackReply = "Arre waah! AI aur Data Science toh future hai. Humara course ekdum practical hai aur placement bhi 100% guaranteed hai! 🤖";
-        } else if(q.includes("fee") || q.includes("paise")) {
-            fallbackReply = "Fees bilkul affordable hai bhai, aur EMI options bhi available hain. Tension mat lo, padhai pe focus karo! 💸";
-        }
-
-        res.json({ success: true, reply: fallbackReply, fallback: true });
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+        
+        res.json({ reply: text });
+    } catch (error) {
+        console.error("AI Chat Error:", error);
+        res.status(500).json({ error: "Failed to process AI chat" });
     }
 });
 

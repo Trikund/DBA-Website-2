@@ -25,51 +25,81 @@ router.get('/generate', auth, async (req, res) => {
             }
         }
         
-        // Create a document
+        // Create a document with no margins so absolute positioning doesn't trigger new pages
         const doc = new PDFDocument({
             layout: 'landscape',
             size: 'A4',
+            margins: { top: 0, bottom: 0, left: 0, right: 0 }
         });
 
         res.setHeader('Content-disposition', 'attachment; filename="certificate.pdf"');
         res.setHeader('Content-type', 'application/pdf');
 
-        // Pipe its output somewhere, like to a file or HTTP response
+        // Pipe its output to HTTP response
         doc.pipe(res);
 
-        // Add background or border
-        doc.rect(20, 20, doc.page.width - 40, doc.page.height - 40).stroke('#1e3a8a');
-        doc.rect(25, 25, doc.page.width - 50, doc.page.height - 50).stroke('#3b82f6');
+        // Elegant Borders
+        doc.lineWidth(1);
+        doc.rect(20, 20, 841.89 - 40, 595.28 - 40).stroke('#d1d5db');
+        doc.lineWidth(2);
+        doc.rect(25, 25, 841.89 - 50, 595.28 - 50).stroke('#1e3a8a');
 
-        // Title
-        doc.fontSize(40).fillColor('#1e3a8a').text('Certificate of Completion', {
-            align: 'center'
-        });
-        doc.moveDown(1);
+        const pageWidth = 841.89;
+        const centerParams = { width: pageWidth, align: 'center' };
+        
+        // 1. Logo (Top Center)
+        const logoPath = require('path').join(__dirname, '../logo.png');
+        try {
+            // Increased logo size for better visibility
+            doc.image(logoPath, (pageWidth - 140) / 2, 30, { width: 140 });
+        } catch (e) {}
 
-        // Subtitle
-        doc.fontSize(20).fillColor('#4b5563').text('This is proudly presented to', {
-            align: 'center'
-        });
-        doc.moveDown(1);
+        // 2. Header Text (Y = 175)
+        doc.font('Helvetica').fontSize(12).fillColor('#64748b').text('DIGITAL BYTE ACADEMY PRESENTS THIS', 0, 175, { ...centerParams, characterSpacing: 2 });
+        doc.font('Helvetica-Bold').fontSize(38).fillColor('#0f172a').text('CERTIFICATE OF COMPLETION', 0, 205, centerParams);
 
-        // Student Name
-        doc.fontSize(35).fillColor('#111827').text(studentName, {
-            align: 'center',
-            underline: true
-        });
-        doc.moveDown(1);
+        // 3. Subtitle (Y = 270)
+        doc.font('Helvetica-Oblique').fontSize(16).fillColor('#64748b').text('Proudly awarded to', 0, 270, centerParams);
 
-        // Description
-        doc.fontSize(16).fillColor('#4b5563').text(`For successfully completing the ${courseName} masterclass at Digital Byte Academy.`, {
-            align: 'center',
-            width: 600
-        });
-        doc.moveDown(2);
+        // 4. Student Name (Y = 300)
+        const fontPath = require('path').join(__dirname, '../GreatVibes-Regular.ttf');
+        try {
+            doc.font(fontPath).fontSize(55).fillColor('#2563eb').text(studentName, 0, 300, centerParams);
+        } catch(e) {
+            doc.font('Helvetica-Bold').fontSize(40).fillColor('#2563eb').text(studentName.toUpperCase(), 0, 310, centerParams);
+        }
+        
+        // 5. Underline Name (Y = 370)
+        doc.moveTo(250, 370).lineTo(591, 370).stroke('#cbd5e1');
 
-        // Date and Signatures
-        doc.fontSize(12).fillColor('#111827').text(`Date: ${new Date().toLocaleDateString()}`, 100, 450);
-        doc.text('Instructor Signature: _________________', 500, 450);
+        // 6. Description (Y = 400)
+        doc.font('Helvetica').fontSize(14).fillColor('#334155').text(`For successfully completing the comprehensive masterclass in`, 0, 400, centerParams);
+        doc.font('Helvetica-Bold').fontSize(22).fillColor('#0f172a').text(courseName.toUpperCase(), 0, 425, centerParams);
+
+        // 7. Footer Section
+        const footerY = 530; // Push footer very close to bottom border
+
+        // Date (Left)
+        doc.font('Helvetica-Bold').fontSize(12).fillColor('#0f172a').text(new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }), 100, footerY - 20, { width: 180, align: 'center' });
+        doc.moveTo(100, footerY).lineTo(280, footerY).stroke('#cbd5e1');
+        doc.font('Helvetica').fontSize(10).fillColor('#64748b').text('DATE OF ISSUE', 100, footerY + 10, { width: 180, align: 'center' });
+
+        // Stamp (Center)
+        const stampPath = require('path').join(__dirname, '../stamp.jpg');
+        try {
+            doc.image(stampPath, (pageWidth - 70) / 2, footerY - 50, { width: 70 });
+        } catch(e) {}
+
+        // Signature (Right)
+        const sigFontPath = require('path').join(__dirname, '../GreatVibes-Regular.ttf');
+        try {
+            // Using GreatVibes font per user request
+            doc.font(sigFontPath).fontSize(38).fillColor('#0f172a').text('Sachin Chaudhary', 550, footerY - 45, { lineBreak: false });
+        } catch (e) {
+            doc.font('Helvetica-Oblique').fontSize(20).fillColor('#0f172a').text('Sachin Chaudhary', 550, footerY - 25, { lineBreak: false });
+        }
+        doc.moveTo(560, footerY).lineTo(740, footerY).stroke('#cbd5e1');
+        doc.font('Helvetica').fontSize(10).fillColor('#64748b').text('AUTHORIZED SIGNATURE', 560, footerY + 10, { width: 180, align: 'center' });
 
         // Finalize PDF file
         doc.end();

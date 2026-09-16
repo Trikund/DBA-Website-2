@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
     course: {
         type: String,
         default: null
+    },
+    isSuspended: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
 

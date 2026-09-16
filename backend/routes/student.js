@@ -9,12 +9,53 @@ const auth = require('../middleware/auth');
 // @access  Private
 router.get('/profile', auth, async (req, res) => {
     try {
-        const profile = await StudentProfile.findOne({ user: req.user.id })
+        let profile = await StudentProfile.findOne({ user: req.user.id })
             .populate('user', ['name', 'email'])
             .populate('enrolledCourses.courseId', ['title', 'instructor', 'totalFee', 'duration']);
 
         if (!profile) {
-            return res.status(400).json({ msg: 'There is no profile for this user' });
+            // For Demo Purposes: Auto-generate a beautiful, detailed mock profile for new users
+            // So that the dashboard looks rich and full of data instantly.
+            
+            // Try to find the Full Stack course to link, or any course
+            const defaultCourse = await Course.findOne({ title: /Full Stack/i }) || await Course.findOne();
+            
+            const nextMonth = new Date();
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            
+            const mockProfile = new StudentProfile({
+                user: req.user.id,
+                enrolledCourses: defaultCourse ? [{
+                    courseId: defaultCourse._id,
+                    progress: 0, // Fresh user, 0% progress
+                    assignmentsCompleted: 0,
+                    quizzesCompleted: 0
+                }] : [],
+                feeDetails: {
+                    totalFee: defaultCourse ? defaultCourse.totalFee : 45000,
+                    amountPaid: 0,
+                    nextInstallmentDate: nextMonth
+                },
+                attendance: {
+                    present: 0, // Fresh user, 0 attendance
+                    totalClasses: 0
+                },
+                liveClasses: [
+                    {
+                        title: "Orientation Session",
+                        date: new Date(new Date().setHours(19, 0, 0, 0)), // Today 7 PM
+                        instructor: "System Admin",
+                        link: "https://zoom.us/orientation"
+                    }
+                ]
+            });
+            
+            await mockProfile.save();
+            
+            // Re-fetch to get populated fields
+            profile = await StudentProfile.findOne({ user: req.user.id })
+                .populate('user', ['name', 'email'])
+                .populate('enrolledCourses.courseId', ['title', 'instructor', 'totalFee', 'duration']);
         }
 
         res.json(profile);

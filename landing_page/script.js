@@ -553,44 +553,50 @@ if (aiInputWrapper) {
         msgText.innerHTML = '<span class="thinking-dots">Thinking<span>.</span><span>.</span><span>.</span></span>';
 
         try {
-            const systemPrompt = `You are Motion AI, a friendly and expert tech counselor for Digital Byte Academy. 
-Guide students about MERN, AI, Data Science, Cyber Security. 
-Points: 100% placement, 4-6 months duration, affordable fees.
-RULES:
-1. Speak STRICTLY in natural "Hinglish" (Hindi language written in English alphabet). DO NOT use JSON. DO NOT use Devanagari script.
-2. Keep it short (2-3 sentences max).
-3. Use 1-2 emojis.
-4. Be encouraging, use words like 'Bhai', 'Bilkul'.`;
+            const url = `http://localhost:5000/api/ai/chat`;
             
-            const finalPrompt = systemPrompt + "\n\nUser Question: " + query;
-            const url = `https://text.pollinations.ai/${encodeURIComponent(finalPrompt)}`;
-            
-            const response = await fetch(url);
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ message: query })
+            });
             
             if(!response.ok) {
                 throw new Error('API Request Failed');
             }
             
-            // Pollinations returns raw text directly
-            responseText = await response.text();
+            const data = await response.json();
+            responseText = data.reply;
             
         } catch (error) {
             console.error("AI API failed, using intelligent fallback:", error);
             
             // Bulletproof Local Fallback AI
             const q = query.toLowerCase();
-            if(q.includes("mern") || q.includes("web") || q.includes("full stack")) {
-                responseText = "Bhai, Web Dev (MERN Stack) ki bohot demand hai! 🔥 Humare 4-6 mahine ke course me aap frontend/backend master kar loge, 100% placement ke sath! 🚀";
-            } else if(q.includes("ai") || q.includes("data") || q.includes("machine")) {
-                responseText = "Arre waah! AI aur Data Science toh future hai. Humara course ekdum practical hai aur placement bhi 100% guaranteed hai! 🤖";
-            } else if(q.includes("fee") || q.includes("paise") || q.includes("cost") || q.includes("price")) {
-                responseText = "Fees bilkul affordable hai bhai, aur EMI options bhi available hain. Tension mat lo, padhai pe focus karo! 💸";
-            } else if(q.includes("hi") || q.includes("hello") || q.includes("hey")) {
-                responseText = "Hello bhai! Kaisa chal raha hai? Main Digital Byte Academy ka AI counselor hu. Aapko kounse course ki details chahiye? 😊";
-            } else if(q.includes("time") || q.includes("duration") || q.includes("kitna")) {
-                responseText = "Humare saare courses normally 4 se 6 mahine ke hote hain bhai. Sath me live projects bhi banwate hain! 💻";
+            if (q.includes("rag") || q.includes("retrieval augmented generation")) {
+                responseText = "RAG (Retrieval-Augmented Generation) is a technique where AI fetches information from your own documents before generating an answer. It prevents hallucinations! We teach RAG practically in our Gen-AI module. 🔥";
+            } else if (q.includes("react") || q.includes("dom")) {
+                responseText = "React's Virtual DOM makes it super fast! In our MERN stack course, you'll learn advanced React (Hooks, Context, Redux) from scratch. 🚀";
+            } else if (q.includes("node") || q.includes("express") || q.includes("backend")) {
+                responseText = "Node.js and Express make backend development robust! Our full stack course covers API development, authentication, and deployment in depth. 😎";
+            } else if (q.includes("python") || q.includes("machine learning")) {
+                responseText = "Python is the heart of AI and Data Science! Our Python track covers Data Structures, Pandas, and ML Algorithms in detail. 🐍";
+            } else if (q.includes("database") || q.includes("mongo") || q.includes("sql")) {
+                responseText = "No app is complete without a database! We teach both NoSQL (MongoDB) and SQL concepts so you can handle data like a pro. 🗄️";
+            } else if (q.includes("mern") || q.includes("web") || q.includes("full stack")) {
+                responseText = "Web Development (MERN Stack) is in huge demand! 🔥 In our 4-6 months course, you'll master frontend and backend with 100% placement assistance! 🚀";
+            } else if (q.includes("ai") || q.includes("data") || q.includes("machine") || q.includes("generative")) {
+                responseText = "That's awesome! AI and Generative AI are the future. Our course is 100% practical with placement assistance! We teach LLMs, LangChain, and more. 🤖";
+            } else if (q.includes("fee") || q.includes("paise") || q.includes("cost") || q.includes("price")) {
+                responseText = "Our fees are highly affordable, and we offer flexible EMI options. Don't worry about the cost, just focus on learning! 💸";
+            } else if (q.includes("hi") || q.includes("hello") || q.includes("hey")) {
+                responseText = "Hello there! How's it going? I am the AI counselor for Digital Byte Academy. Would you like course details or do you have a technical question? 😊";
+            } else if (q.includes("time") || q.includes("duration") || q.includes("kitna")) {
+                responseText = "All our comprehensive courses typically run for 4 to 6 months. You'll be building live projects alongside! 💻";
             } else {
-                responseText = "Bhai, main samajh nahi paya! Par agar aap courses dhoondh rahe ho toh MERN, AI aur Data Science humare best courses hain. Kuch details batau? ✨";
+                responseText = "I'm not exactly sure about that! But if you have any questions about MERN, Python, Data Science, or AI, feel free to ask. I'd love to help! ✨";
             }
         }
 

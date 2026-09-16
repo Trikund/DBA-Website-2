@@ -5,14 +5,34 @@ import { AuthContext } from '../context/AuthContext';
 import { 
     LogOut, LayoutDashboard, Users, BookOpen, Settings, Bell, User, 
     TrendingUp, Wallet, GraduationCap, Plus, Search, MoreVertical, Shield,
-    Activity, ArrowUpRight, ChevronRight
+    Activity, ArrowUpRight, ChevronRight, BarChart3, PieChart
 } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
+
+const analyticsData = [
+    { name: 'Jan', revenue: 45000, students: 120 },
+    { name: 'Feb', revenue: 52000, students: 145 },
+    { name: 'Mar', revenue: 48000, students: 130 },
+    { name: 'Apr', revenue: 61000, students: 170 },
+    { name: 'May', revenue: 75000, students: 210 },
+    { name: 'Jun', revenue: 89000, students: 245 },
+    { name: 'Jul', revenue: 105000, students: 280 },
+];
 
 const AdminDashboard = () => {
     const { user, logout } = useContext(AuthContext);
     const [activeTab, setActiveTab] = useState('overview');
-    const [tableFilter, setTableFilter] = useState('all'); // Moved up to prevent state loss
+    const [tableFilter, setTableFilter] = useState('all'); 
+    const [userSearchTerm, setUserSearchTerm] = useState(''); 
+    const [selectedManageUser, setSelectedManageUser] = useState(null); 
+    const [manageActionState, setManageActionState] = useState('default'); 
     const [isProfileOpen, setIsProfileOpen] = useState(false);
+    
+    // Course Management States
+    const [isCourseModalOpen, setIsCourseModalOpen] = useState(false);
+    const [editingCourse, setEditingCourse] = useState(null);
+    const [viewingCourse, setViewingCourse] = useState(null);
+    const [courseFormData, setCourseFormData] = useState({ title: '', description: '', instructor: 'Expert Instructor', duration: '', totalFee: '', category: '' });
     const profileRef = useRef(null);
     const navigate = useNavigate();
 
@@ -51,6 +71,98 @@ const AdminDashboard = () => {
         };
         if(user?.token) fetchAdminStats();
     }, [user]);
+
+    const handleDeleteUser = async (userId) => {
+        if (!window.confirm("Are you sure you want to permanently delete this user?")) return;
+        try {
+            await axios.delete(`http://localhost:5000/api/admin/users/${userId}`, {
+                headers: { 'x-auth-token': user?.token }
+            });
+            setRecentUsers(prev => prev.filter(u => (u._id || u.id) !== userId));
+            setSelectedManageUser(null);
+            setManageActionState('default');
+            alert("User deleted successfully.");
+        } catch (err) {
+            console.error(err);
+            alert("Failed to delete user.");
+        }
+    };
+
+    const handleChangeRole = async (newRole) => {
+        try {
+            await axios.put(`http://localhost:5000/api/admin/users/${selectedManageUser._id || selectedManageUser.id}/role`, { role: newRole }, {
+                headers: { 'x-auth-token': user?.token }
+            });
+            setRecentUsers(prev => prev.map(u => (u._id || u.id) === (selectedManageUser._id || selectedManageUser.id) ? { ...u, role: newRole } : u));
+            setSelectedManageUser(null);
+            setManageActionState('default');
+            alert(`Role successfully changed to ${newRole}`);
+        } catch (err) {
+            console.error(err);
+            alert("Failed to change role.");
+        }
+    };
+
+    const handleSuspendUser = async () => {
+        try {
+            const res = await axios.put(`http://localhost:5000/api/admin/users/${selectedManageUser._id || selectedManageUser.id}/suspend`, {}, {
+                headers: { 'x-auth-token': user?.token }
+            });
+            setRecentUsers(prev => prev.map(u => (u._id || u.id) === (selectedManageUser._id || selectedManageUser.id) ? { ...u, isSuspended: res.data.isSuspended } : u));
+            setSelectedManageUser(null);
+            setManageActionState('default');
+            // Toast not strictly needed since UI will update to 'Suspended'
+        } catch (err) {
+            console.error(err);
+            alert("Failed to toggle suspension status.");
+        }
+    };
+
+    const openCourseModal = (course = null) => {
+        if (course) {
+            setEditingCourse(course);
+            setCourseFormData({
+                title: course.title || '',
+                description: course.description || '',
+                instructor: course.instructor || 'Expert Instructor',
+                duration: course.duration || '',
+                totalFee: course.totalFee || '',
+                category: course.category || ''
+            });
+        } else {
+            setEditingCourse(null);
+            setCourseFormData({ title: '', description: '', instructor: 'Expert Instructor', duration: '', totalFee: '', category: '' });
+        }
+        setIsCourseModalOpen(true);
+    };
+
+    const handleCourseSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            if (editingCourse) {
+                const res = await axios.put(`http://localhost:5000/api/admin/courses/${editingCourse.id || editingCourse._id}`, courseFormData, {
+                    headers: { 'x-auth-token': user?.token }
+                });
+                setActiveCoursesList(prev => prev.map(c => (c.id || c._id) === (editingCourse.id || editingCourse._id) ? { ...c, ...res.data } : c));
+                alert("Course updated successfully.");
+            } else {
+                const res = await axios.post(`http://localhost:5000/api/admin/courses`, courseFormData, {
+                    headers: { 'x-auth-token': user?.token }
+                });
+                setActiveCoursesList(prev => [...prev, { ...res.data, id: res.data._id, students: 0, revenue: '₹ 0', status: 'Published' }]);
+                alert("Course created successfully.");
+            }
+            setIsCourseModalOpen(false);
+        } catch (err) {
+            console.error(err);
+            alert("Failed to save course.");
+        }
+    };
+
+    const handleAction = (actionName) => {
+        alert(`${actionName} successfully applied to ${selectedManageUser.name}`);
+        setSelectedManageUser(null);
+    };
 
     const OverviewTab = () => {
         const filteredUsers = recentUsers.filter(u => tableFilter === 'all' || u.role === tableFilter);
@@ -116,6 +228,66 @@ const AdminDashboard = () => {
                 </div>
             </div>
 
+            {/* Detailed Analytics Charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="luxury-glass p-6 rounded-2xl relative overflow-hidden">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                <TrendingUp className="w-5 h-5 text-amber-400" /> Revenue Growth
+                            </h3>
+                            <p className="text-sm text-zinc-400">Monthly revenue trends</p>
+                        </div>
+                    </div>
+                    <div className="h-72 w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={analyticsData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                <defs>
+                                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3}/>
+                                        <stop offset="95%" stopColor="#f59e0b" stopOpacity={0}/>
+                                    </linearGradient>
+                                </defs>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
+                                <XAxis dataKey="name" stroke="#ffffff50" axisLine={false} tickLine={false} tick={{fontSize: 12}} dy={10} />
+                                <YAxis stroke="#ffffff50" axisLine={false} tickLine={false} tick={{fontSize: 12}} />
+                                <Tooltip 
+                                    contentStyle={{ backgroundColor: '#18181b', border: '1px solid #ffffff10', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.5)' }}
+                                    itemStyle={{ color: '#f59e0b', fontWeight: 'bold' }}
+                                />
+                                <Area type="monotone" dataKey="revenue" stroke="#f59e0b" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+
+                <div className="luxury-glass p-6 rounded-2xl relative overflow-hidden">
+                    <div className="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                <Users className="w-5 h-5 text-blue-400" /> Student Enrollments
+                            </h3>
+                            <p className="text-sm text-zinc-400">Monthly active student counts</p>
+                        </div>
+                    </div>
+                    <div className="h-72 w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={analyticsData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
+                                <XAxis dataKey="name" stroke="#ffffff50" axisLine={false} tickLine={false} tick={{fontSize: 12}} dy={10} />
+                                <YAxis stroke="#ffffff50" axisLine={false} tickLine={false} tick={{fontSize: 12}} />
+                                <Tooltip 
+                                    contentStyle={{ backgroundColor: '#18181b', border: '1px solid #ffffff10', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.5)' }}
+                                    itemStyle={{ color: '#3b82f6', fontWeight: 'bold' }}
+                                    cursor={{ fill: '#ffffff05' }}
+                                />
+                                <Bar dataKey="students" fill="#3b82f6" radius={[6, 6, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+            </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Recent Users Table */}
                 <div className="lg:col-span-2 luxury-glass p-6 rounded-2xl">
@@ -157,8 +329,8 @@ const AdminDashboard = () => {
                                             </span>
                                         </td>
                                         <td className="py-3">
-                                            <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${u.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'}`}>
-                                                {u.status}
+                                            <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-400`}>
+                                                Active
                                             </span>
                                         </td>
                                         <td className="py-3 text-right">
@@ -211,7 +383,18 @@ const AdminDashboard = () => {
         );
     };
 
-    const UsersTab = () => (
+    const UsersTab = () => {
+        const filteredTabUsers = recentUsers
+            .concat([{ _id: 'admin_1', name: 'Super Admin', email: 'admin@digitalbyte.com', role: 'admin', date: new Date().toISOString() }])
+            .filter(u => u.name.toLowerCase().includes(userSearchTerm.toLowerCase()) || u.email.toLowerCase().includes(userSearchTerm.toLowerCase()));
+
+        const formatDate = (dateString) => {
+            if (!dateString) return 'Just Now';
+            const d = new Date(dateString);
+            return isNaN(d) ? 'N/A' : d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+        };
+
+        return (
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex justify-between items-end mb-6">
                 <div>
@@ -221,7 +404,7 @@ const AdminDashboard = () => {
                 <div className="flex gap-3">
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
-                        <input type="text" placeholder="Search users..." className="luxury-input pl-10 pr-4 py-2 rounded-xl text-sm w-64" />
+                        <input type="text" placeholder="Search users..." value={userSearchTerm} onChange={(e) => setUserSearchTerm(e.target.value)} className="luxury-input pl-10 pr-4 py-2 rounded-xl text-sm w-64" />
                     </div>
                     <button className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl text-sm font-bold shadow-lg hover:shadow-blue-500/25 transition-all flex items-center gap-2">
                         <Plus className="w-4 h-4" /> Add User
@@ -241,8 +424,8 @@ const AdminDashboard = () => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                        {recentUsers.concat([{ id: 5, name: 'Admin', email: 'admin@digitalbyte.com', role: 'admin', status: 'Active', date: 'Oct 01, 2026' }]).map(u => (
-                            <tr key={u.id} className="hover:bg-white/5 transition-colors">
+                        {filteredTabUsers.map(u => (
+                            <tr key={u._id || u.id} className="hover:bg-white/5 transition-colors">
                                 <td className="px-6 py-4">
                                     <div className="flex items-center gap-3">
                                         <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-inner ${u.role === 'admin' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-zinc-800'}`}>
@@ -263,25 +446,35 @@ const AdminDashboard = () => {
                                         {u.role}
                                     </span>
                                 </td>
-                                <td className="px-6 py-4 text-sm text-zinc-400">{u.date}</td>
+                                <td className="px-6 py-4 text-sm text-zinc-400">{formatDate(u.date)}</td>
                                 <td className="px-6 py-4">
-                                    <span className={`flex items-center gap-1.5 text-xs font-bold ${u.status === 'Active' ? 'text-emerald-400' : 'text-amber-400'}`}>
-                                        <span className={`w-1.5 h-1.5 rounded-full ${u.status === 'Active' ? 'bg-emerald-500' : 'bg-amber-500'}`}></span>
-                                        {u.status}
+                                    <span className={`flex items-center gap-1.5 text-xs font-bold ${u.isSuspended ? 'text-amber-400' : 'text-emerald-400'}`}>
+                                        <span className={`w-1.5 h-1.5 rounded-full ${u.isSuspended ? 'bg-amber-500' : 'bg-emerald-500'}`}></span>
+                                        {u.isSuspended ? 'Suspended' : 'Active'}
                                     </span>
                                 </td>
                                 <td className="px-6 py-4 text-right">
-                                    <button className="px-3 py-1.5 text-xs font-medium text-white bg-white/5 hover:bg-white/10 rounded border border-white/10 transition-colors">
+                                    <button 
+                                        onClick={() => setSelectedManageUser(u)}
+                                        className="px-3 py-1.5 text-xs font-medium text-white bg-white/5 hover:bg-white/10 rounded border border-white/10 transition-colors"
+                                    >
                                         Manage
                                     </button>
                                 </td>
                             </tr>
                         ))}
+                        {filteredTabUsers.length === 0 && (
+                            <tr>
+                                <td colSpan="5" className="py-12 text-center text-zinc-500 text-sm">
+                                    No users found matching "{userSearchTerm}".
+                                </td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
         </div>
-    );
+    )};
 
     const CoursesTab = () => (
         <div className="space-y-6 animate-in fade-in duration-500">
@@ -290,7 +483,7 @@ const AdminDashboard = () => {
                     <h2 className="text-2xl font-bold text-white mb-1">Course Catalog</h2>
                     <p className="text-sm text-zinc-400">Manage existing courses or create new ones.</p>
                 </div>
-                <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-600/20 transition-all flex items-center gap-2">
+                <button onClick={() => openCourseModal()} className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-sm font-bold shadow-lg shadow-blue-600/20 transition-all flex items-center gap-2">
                     <Plus className="w-4 h-4" /> Create Course
                 </button>
             </div>
@@ -314,10 +507,10 @@ const AdminDashboard = () => {
                         </div>
                         
                         <div className="flex items-center gap-3 mt-auto pt-4 border-t border-white/10">
-                            <button className="flex-1 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg text-sm font-medium transition-colors border border-white/10">
+                            <button onClick={() => openCourseModal(course)} className="flex-1 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg text-sm font-medium transition-colors border border-white/10">
                                 Edit
                             </button>
-                            <button className="flex-1 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg text-sm font-medium transition-colors border border-white/10">
+                            <button onClick={() => setViewingCourse(course)} className="flex-1 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg text-sm font-medium transition-colors border border-white/10">
                                 View Data
                             </button>
                         </div>
@@ -342,7 +535,7 @@ const AdminDashboard = () => {
                 <div className="p-8 border-b border-white/5 relative z-10">
                     <div className="flex items-center gap-4">
                         <div className="h-16 flex items-center justify-center shrink-0">
-                            <img src="/logo.png" alt="Digital Byte Logo" className="h-full w-auto object-contain drop-shadow-xl" />
+                            <img src="/logo.png" alt="Digital Byte Logo" className="h-full w-auto object-contain drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]" />
                         </div>
                         <div>
                             <span className="text-xl font-bold text-white block leading-tight">Admin Portal</span>
@@ -484,6 +677,203 @@ const AdminDashboard = () => {
                     </div>
                 </div>
             </main>
+
+            {/* Manage User Modal */}
+            {selectedManageUser && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-[#121214] border border-white/10 rounded-2xl w-full max-w-md p-6 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 blur-3xl rounded-full"></div>
+                        <h2 className="text-xl font-bold text-white mb-2 relative z-10 flex items-center gap-2">
+                            <Settings className="w-5 h-5 text-purple-400" /> Manage User
+                        </h2>
+                        <p className="text-sm text-zinc-400 mb-6 relative z-10">Updating profile for <strong className="text-white">{selectedManageUser.name}</strong></p>
+
+                        <div className="space-y-4 relative z-10">
+                            {manageActionState === 'default' ? (
+                                <>
+                                    <button onClick={() => setManageActionState('viewProfile')} className="w-full text-left px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl transition-colors flex items-center justify-between group">
+                                        <div>
+                                            <h4 className="text-sm font-bold text-white">View Full Profile</h4>
+                                            <p className="text-xs text-zinc-500">See progress, certificates, and details</p>
+                                        </div>
+                                        <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-white" />
+                                    </button>
+
+                                    <button onClick={() => setManageActionState('changeRole')} className="w-full text-left px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl transition-colors flex items-center justify-between group">
+                                        <div>
+                                            <h4 className="text-sm font-bold text-white">Change Role</h4>
+                                            <p className="text-xs text-zinc-500">Currently: {selectedManageUser.role}</p>
+                                        </div>
+                                        <ChevronRight className="w-4 h-4 text-zinc-500 group-hover:text-white" />
+                                    </button>
+
+                                    <button onClick={() => handleSuspendUser()} className="w-full text-left px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl transition-colors flex items-center justify-between group">
+                                        <div>
+                                            <h4 className="text-sm font-bold text-amber-400">{selectedManageUser.isSuspended ? 'Unsuspend Account' : 'Suspend Account'}</h4>
+                                            <p className="text-xs text-zinc-500">{selectedManageUser.isSuspended ? 'Restore user access to the platform' : 'Temporarily disable access'}</p>
+                                        </div>
+                                        <Shield className="w-4 h-4 text-amber-400 opacity-50 group-hover:opacity-100" />
+                                    </button>
+
+                                    <button onClick={() => handleDeleteUser(selectedManageUser._id || selectedManageUser.id)} className="w-full text-left px-4 py-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-xl transition-colors flex items-center justify-between group">
+                                        <div>
+                                            <h4 className="text-sm font-bold text-red-400">Delete User</h4>
+                                            <p className="text-xs text-red-500/70">Permanently remove this account</p>
+                                        </div>
+                                    </button>
+                                </>
+                            ) : manageActionState === 'changeRole' ? (
+                                <>
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h4 className="text-sm font-bold text-white">Select New Role</h4>
+                                        <button onClick={() => setManageActionState('default')} className="text-xs text-zinc-400 hover:text-white">← Back</button>
+                                    </div>
+                                    <button onClick={() => handleChangeRole('admin')} className="w-full text-left px-4 py-3 bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/20 rounded-xl transition-colors group">
+                                        <h4 className="text-sm font-bold text-amber-400">Admin</h4>
+                                        <p className="text-xs text-zinc-500">Full system access</p>
+                                    </button>
+                                    <button onClick={() => handleChangeRole('trainer')} className="w-full text-left px-4 py-3 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 rounded-xl transition-colors group">
+                                        <h4 className="text-sm font-bold text-purple-400">Trainer</h4>
+                                        <p className="text-xs text-zinc-500">Can manage courses and view students</p>
+                                    </button>
+                                    <button onClick={() => handleChangeRole('student')} className="w-full text-left px-4 py-3 bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-xl transition-colors group">
+                                        <h4 className="text-sm font-bold text-blue-400">Student</h4>
+                                        <p className="text-xs text-zinc-500">Standard learning access</p>
+                                    </button>
+                                </>
+                            ) : manageActionState === 'viewProfile' ? (
+                                <div className="space-y-4">
+                                    <div className="flex justify-between items-center mb-4">
+                                        <h4 className="text-sm font-bold text-white">User Profile Details</h4>
+                                        <button onClick={() => setManageActionState('default')} className="text-xs text-zinc-400 hover:text-white">← Back</button>
+                                    </div>
+                                    <div className="bg-white/5 p-4 rounded-xl border border-white/5">
+                                        <div className="flex justify-between py-2 border-b border-white/5">
+                                            <span className="text-xs text-zinc-500">ID</span>
+                                            <span className="text-xs text-white font-mono">{selectedManageUser._id || selectedManageUser.id}</span>
+                                        </div>
+                                        <div className="flex justify-between py-2 border-b border-white/5">
+                                            <span className="text-xs text-zinc-500">Email</span>
+                                            <span className="text-xs text-white">{selectedManageUser.email}</span>
+                                        </div>
+                                        <div className="flex justify-between py-2 border-b border-white/5">
+                                            <span className="text-xs text-zinc-500">Role</span>
+                                            <span className="text-xs text-white capitalize">{selectedManageUser.role}</span>
+                                        </div>
+                                        <div className="flex justify-between py-2 border-b border-white/5">
+                                            <span className="text-xs text-zinc-500">Status</span>
+                                            <span className={`text-xs font-bold ${selectedManageUser.isSuspended ? 'text-amber-400' : 'text-emerald-400'}`}>{selectedManageUser.isSuspended ? 'Suspended' : 'Active'}</span>
+                                        </div>
+                                        <div className="flex justify-between py-2">
+                                            <span className="text-xs text-zinc-500">Joined</span>
+                                            <span className="text-xs text-white">{new Date(selectedManageUser.date || selectedManageUser.createdAt).toLocaleDateString()}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : null}
+                        </div>
+
+                        <div className="mt-8 flex justify-end relative z-10">
+                            <button 
+                                onClick={() => { setSelectedManageUser(null); setManageActionState('default'); }} 
+                                className="px-5 py-2 rounded-xl text-sm font-bold text-white bg-white/10 hover:bg-white/20 transition-colors"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Course Edit/Create Modal */}
+            {isCourseModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-[#121214] border border-white/10 rounded-2xl w-full max-w-lg p-6 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-3xl rounded-full"></div>
+                        <h2 className="text-xl font-bold text-white mb-2 relative z-10 flex items-center gap-2">
+                            <BookOpen className="w-5 h-5 text-blue-400" /> {editingCourse ? 'Edit Course' : 'Create New Course'}
+                        </h2>
+                        <p className="text-sm text-zinc-400 mb-6 relative z-10">{editingCourse ? 'Update the details for this course.' : 'Add a new course to the catalog.'}</p>
+                        
+                        <form onSubmit={handleCourseSubmit} className="space-y-4 relative z-10">
+                            <div>
+                                <label className="block text-xs font-medium text-zinc-400 mb-1">Course Title</label>
+                                <input required type="text" value={courseFormData.title} onChange={e => setCourseFormData({...courseFormData, title: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white outline-none focus:border-blue-500/50" placeholder="e.g. Full Stack Web Dev" />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-zinc-400 mb-1">Description</label>
+                                <textarea required value={courseFormData.description} onChange={e => setCourseFormData({...courseFormData, description: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white outline-none focus:border-blue-500/50 h-20 resize-none" placeholder="Course details..."></textarea>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-medium text-zinc-400 mb-1">Duration</label>
+                                    <input required type="text" value={courseFormData.duration} onChange={e => setCourseFormData({...courseFormData, duration: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white outline-none focus:border-blue-500/50" placeholder="e.g. 12 Weeks" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-zinc-400 mb-1">Fee (₹)</label>
+                                    <input required type="number" value={courseFormData.totalFee} onChange={e => setCourseFormData({...courseFormData, totalFee: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white outline-none focus:border-blue-500/50" placeholder="e.g. 25000" />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-medium text-zinc-400 mb-1">Instructor</label>
+                                    <input required type="text" value={courseFormData.instructor} onChange={e => setCourseFormData({...courseFormData, instructor: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white outline-none focus:border-blue-500/50" placeholder="Name" />
+                                </div>
+                                <div>
+                                    <label className="block text-xs font-medium text-zinc-400 mb-1">Category</label>
+                                    <input required type="text" value={courseFormData.category} onChange={e => setCourseFormData({...courseFormData, category: e.target.value})} className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white outline-none focus:border-blue-500/50" placeholder="e.g. IT" />
+                                </div>
+                            </div>
+                            <div className="mt-8 flex justify-end gap-3 pt-4">
+                                <button type="button" onClick={() => setIsCourseModalOpen(false)} className="px-5 py-2 rounded-xl text-sm font-bold text-white bg-white/5 hover:bg-white/10 transition-colors">Cancel</button>
+                                <button type="submit" className="px-5 py-2 rounded-xl text-sm font-bold text-white bg-blue-600 hover:bg-blue-500 shadow-lg shadow-blue-600/20 transition-all">Save Course</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* View Course Data Modal */}
+            {viewingCourse && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-[#121214] border border-white/10 rounded-2xl w-full max-w-md p-6 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 blur-3xl rounded-full"></div>
+                        <h2 className="text-xl font-bold text-white mb-2 relative z-10 flex items-center gap-2">
+                            <BookOpen className="w-5 h-5 text-emerald-400" /> Course Data
+                        </h2>
+                        <p className="text-sm text-zinc-400 mb-6 relative z-10">Analytics for <strong className="text-white">{viewingCourse.title}</strong></p>
+
+                        <div className="space-y-4 relative z-10 bg-white/5 p-4 rounded-xl border border-white/5">
+                            <div className="flex justify-between py-2 border-b border-white/5">
+                                <span className="text-xs text-zinc-500">Total Enrolled</span>
+                                <span className="text-xs text-white font-bold flex items-center gap-1"><Users className="w-3 h-3 text-blue-400" /> {viewingCourse.students} Students</span>
+                            </div>
+                            <div className="flex justify-between py-2 border-b border-white/5">
+                                <span className="text-xs text-zinc-500">Generated Revenue</span>
+                                <span className="text-xs text-white font-bold flex items-center gap-1"><Wallet className="w-3 h-3 text-emerald-400" /> {viewingCourse.revenue}</span>
+                            </div>
+                            <div className="flex justify-between py-2 border-b border-white/5">
+                                <span className="text-xs text-zinc-500">Duration</span>
+                                <span className="text-xs text-white">{viewingCourse.duration}</span>
+                            </div>
+                            <div className="flex justify-between py-2 border-b border-white/5">
+                                <span className="text-xs text-zinc-500">Category</span>
+                                <span className="text-xs text-white uppercase">{viewingCourse.category}</span>
+                            </div>
+                            <div className="flex justify-between py-2">
+                                <span className="text-xs text-zinc-500">Instructor</span>
+                                <span className="text-xs text-white">{viewingCourse.instructor}</span>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 flex justify-end relative z-10">
+                            <button onClick={() => setViewingCourse(null)} className="px-5 py-2 rounded-xl text-sm font-bold text-white bg-white/10 hover:bg-white/20 transition-colors">
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

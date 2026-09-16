@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
+const helmet = require('helmet');
 
 // Load env variables
 dotenv.config();
@@ -10,13 +12,13 @@ const app = express();
 
 // Middleware
 app.use(cors());
+app.use(helmet({
+    contentSecurityPolicy: false, // Disabled for simplicity with external assets like Razorpay/Jitsi
+    crossOriginEmbedderPolicy: false
+}));
 app.use(express.json());
 
 // Routes
-app.get('/', (req, res) => {
-    res.send('Digital Byte Academy Backend is Running!');
-});
-
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/ai', require('./routes/ai'));
 app.use('/api/payment', require('./routes/payment'));
@@ -26,6 +28,18 @@ app.use('/api/courses', require('./routes/course'));
 app.use('/api/student', require('./routes/student'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/content', require('./routes/content'));
+
+// Production Setup
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../frontend/dist')));
+    app.use((req, res) => {
+        res.sendFile(path.resolve(__dirname, '../frontend/dist', 'index.html'));
+    });
+} else {
+    app.get('/', (req, res) => {
+        res.send('Digital Byte Academy Backend is Running!');
+    });
+}
 
 // Database Connection
 const PORT = process.env.PORT || 5000;
