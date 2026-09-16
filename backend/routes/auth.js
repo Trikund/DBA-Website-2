@@ -93,5 +93,55 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// @route   GET /api/auth/seed-demo-data
+// @desc    Seed 25 Indian Students and 5 Trainers
+router.get('/seed-demo-data', async (req, res) => {
+    try {
+        const usersCount = await User.countDocuments();
+        // Just to prevent abuse, though it's a demo
+        
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash('123456', salt);
+        
+        const trainers = [
+            { name: 'Ravi Kumar', email: 'ravi@digitalbyte.com', password: hashedPassword, role: 'trainer', course: 'MERN Full Stack' },
+            { name: 'Priya Sharma', email: 'priya@digitalbyte.com', password: hashedPassword, role: 'trainer', course: 'Data Science' },
+            { name: 'Amit Patel', email: 'amit@digitalbyte.com', password: hashedPassword, role: 'trainer', course: 'Cyber Security' },
+            { name: 'Sneha Gupta', email: 'sneha@digitalbyte.com', password: hashedPassword, role: 'trainer', course: 'Cloud Computing' },
+            { name: 'Vikram Singh', email: 'vikram@digitalbyte.com', password: hashedPassword, role: 'trainer', course: 'AI ML' }
+        ];
+        
+        const students = [
+            'Rahul Verma', 'Neha Reddy', 'Karan Desai', 'Pooja Joshi', 'Aditya Nair',
+            'Ananya Iyer', 'Siddharth Rao', 'Kavya Pillai', 'Rohan Mehta', 'Ishita Agarwal',
+            'Varun Chauhan', 'Aarohi Sen', 'Tanya Menon', 'Pranav Kadam', 'Shruti Bansal',
+            'Yash Bhatia', 'Riya Kapoor', 'Dhruv Malhotra', 'Kriti Jain', 'Arjun Saxena',
+            'Megha Tiwari', 'Nikhil Pandey', 'Anjali Yadav', 'Devendra Rajput', 'Sanya Thakur'
+        ];
+        
+        const studentDocs = students.map((name, i) => ({
+            name: name,
+            email: student@gmail.com,
+            password: hashedPassword,
+            role: 'student',
+            course: ['MERN Full Stack', 'Data Science', 'Cyber Security', 'Cloud Computing', 'AI ML'][i % 5]
+        }));
+        
+        // Insert all
+        for (let t of trainers) {
+            await User.findOneAndUpdate({ email: t.email }, t, { upsert: true });
+        }
+        for (let s of studentDocs) {
+            await User.findOneAndUpdate({ email: s.email }, s, { upsert: true });
+        }
+        
+        res.json({ msg: 'Seeded 25 Students and 5 Trainers successfully!' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;
+
 
