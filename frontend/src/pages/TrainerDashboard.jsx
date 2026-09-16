@@ -27,7 +27,7 @@ const TrainerDashboard = () => {
         const fetchInitialData = async () => {
             try {
                 // In a real app, you'd fetch courses assigned to this trainer
-                const res = await axios.get('http://localhost:5000/api/courses');
+                const res = await axios.get('/api/courses');
                 setCourses(res.data);
                 if (res.data.length > 0) {
                     setSelectedCourse(res.data[0]._id);
@@ -45,7 +45,7 @@ const TrainerDashboard = () => {
         const fetchContents = async () => {
             if (!selectedCourse) return;
             try {
-                const res = await axios.get(`http://localhost:5000/api/content/course/${selectedCourse}`, {
+                const res = await axios.get(`/api/content/course/${selectedCourse}`, {
                     headers: { 'x-auth-token': user?.token }
                 });
                 setContents(res.data);
@@ -59,7 +59,7 @@ const TrainerDashboard = () => {
     const handleUpload = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:5000/api/content', {
+            const res = await axios.post('/api/content', {
                 ...uploadData,
                 courseId: selectedCourse
             }, {
@@ -77,7 +77,7 @@ const TrainerDashboard = () => {
     const handleDelete = async (id) => {
         if (!window.confirm("Delete this content?")) return;
         try {
-            await axios.delete(`http://localhost:5000/api/content/${id}`, {
+            await axios.delete(`/api/content/${id}`, {
                 headers: { 'x-auth-token': user?.token }
             });
             setContents(contents.filter(c => c._id !== id));
@@ -318,3 +318,4 @@ const TrainerDashboard = () => {
 };
 
 export default TrainerDashboard;
+

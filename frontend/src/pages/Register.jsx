@@ -21,7 +21,7 @@ const Register = () => {
         
         try {
             // Register the user
-            await axios.post('http://localhost:5000/api/auth/register', {
+            await axios.post('/api/auth/register', {
                 name,
                 email,
                 password,
@@ -29,7 +29,7 @@ const Register = () => {
             });
             
             // Auto-login after successful registration
-            const response = await axios.post('http://localhost:5000/api/auth/login', {
+            const response = await axios.post('/api/auth/login', {
                 email,
                 password
             });
@@ -159,3 +159,4 @@ const Register = () => {
 };
 
 export default Register;
+

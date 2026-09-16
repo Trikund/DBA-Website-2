@@ -57,7 +57,7 @@ const AdminDashboard = () => {
     useEffect(() => {
         const fetchAdminStats = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/admin/dashboard', {
+                const res = await axios.get('/api/admin/dashboard', {
                     headers: { 'x-auth-token': user?.token }
                 });
                 setRecentUsers(res.data.recentUsers);
@@ -75,7 +75,7 @@ const AdminDashboard = () => {
     const handleDeleteUser = async (userId) => {
         if (!window.confirm("Are you sure you want to permanently delete this user?")) return;
         try {
-            await axios.delete(`http://localhost:5000/api/admin/users/${userId}`, {
+            await axios.delete(`/api/admin/users/${userId}`, {
                 headers: { 'x-auth-token': user?.token }
             });
             setRecentUsers(prev => prev.filter(u => (u._id || u.id) !== userId));
@@ -90,7 +90,7 @@ const AdminDashboard = () => {
 
     const handleChangeRole = async (newRole) => {
         try {
-            await axios.put(`http://localhost:5000/api/admin/users/${selectedManageUser._id || selectedManageUser.id}/role`, { role: newRole }, {
+            await axios.put(`/api/admin/users/${selectedManageUser._id || selectedManageUser.id}/role`, { role: newRole }, {
                 headers: { 'x-auth-token': user?.token }
             });
             setRecentUsers(prev => prev.map(u => (u._id || u.id) === (selectedManageUser._id || selectedManageUser.id) ? { ...u, role: newRole } : u));
@@ -105,7 +105,7 @@ const AdminDashboard = () => {
 
     const handleSuspendUser = async () => {
         try {
-            const res = await axios.put(`http://localhost:5000/api/admin/users/${selectedManageUser._id || selectedManageUser.id}/suspend`, {}, {
+            const res = await axios.put(`/api/admin/users/${selectedManageUser._id || selectedManageUser.id}/suspend`, {}, {
                 headers: { 'x-auth-token': user?.token }
             });
             setRecentUsers(prev => prev.map(u => (u._id || u.id) === (selectedManageUser._id || selectedManageUser.id) ? { ...u, isSuspended: res.data.isSuspended } : u));
@@ -140,13 +140,13 @@ const AdminDashboard = () => {
         e.preventDefault();
         try {
             if (editingCourse) {
-                const res = await axios.put(`http://localhost:5000/api/admin/courses/${editingCourse.id || editingCourse._id}`, courseFormData, {
+                const res = await axios.put(`/api/admin/courses/${editingCourse.id || editingCourse._id}`, courseFormData, {
                     headers: { 'x-auth-token': user?.token }
                 });
                 setActiveCoursesList(prev => prev.map(c => (c.id || c._id) === (editingCourse.id || editingCourse._id) ? { ...c, ...res.data } : c));
                 alert("Course updated successfully.");
             } else {
-                const res = await axios.post(`http://localhost:5000/api/admin/courses`, courseFormData, {
+                const res = await axios.post(`/api/admin/courses`, courseFormData, {
                     headers: { 'x-auth-token': user?.token }
                 });
                 setActiveCoursesList(prev => [...prev, { ...res.data, id: res.data._id, students: 0, revenue: '₹ 0', status: 'Published' }]);
@@ -879,3 +879,4 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+

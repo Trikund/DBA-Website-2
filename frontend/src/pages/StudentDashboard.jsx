@@ -49,7 +49,7 @@ const StudentDashboard = () => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/student/profile', {
+                const res = await axios.get('/api/student/profile', {
                     headers: { 'x-auth-token': user?.token }
                 });
                 setStudentProfile(res.data);
@@ -105,7 +105,7 @@ const StudentDashboard = () => {
         setChatInput('');
         
         try {
-            const response = await fetch('http://localhost:5000/api/ai/chat', {
+            const response = await fetch('/api/ai/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: currentMessage })
@@ -141,7 +141,7 @@ const StudentDashboard = () => {
 
     const handleDownloadCertificate = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/certificate/generate', {
+            const response = await axios.get('/api/certificate/generate', {
                 headers: { 'x-auth-token': user?.token },
                 responseType: 'blob'
             });
@@ -160,7 +160,7 @@ const StudentDashboard = () => {
 
     const handleDownloadInvoice = async () => {
         try {
-            const response = await axios.get('http://localhost:5000/api/payment/invoice', {
+            const response = await axios.get('/api/payment/invoice', {
                 headers: { 'x-auth-token': user?.token },
                 responseType: 'blob'
             });
@@ -1428,3 +1428,4 @@ const StudentDashboard = () => {
 };
 
 export default StudentDashboard;
+
