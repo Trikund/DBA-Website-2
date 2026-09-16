@@ -61,36 +61,7 @@ router.post('/login', async (req, res) => {
 
         let user = await User.findOne({ email });
         
-        // Auto-Register Flow: If user does not exist, create them instantly
-        if (!user) {
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(password, salt);
-            user = new User({
-                name: email.split('@')[0], // Fallback name from email
-                email,
-                password: hashedPassword,
-                role: 'student' // Default to student
-            });
-            await user.save();
-            
-            try {
-                const sendEmail = require('../utils/sendEmail');
-                await sendEmail({
-                    to: email,
-                    subject: 'Welcome to Digital Byte Academy!',
-                    html: `
-                        <h2>Welcome to Digital Byte Academy! 🚀</h2>
-                        <p>An account was automatically created for you.</p>
-                        <p>Your journey to mastering tech starts today.</p>
-                        <br>
-                        <p>Happy Learning!</p>
-                        <p>- The Digital Byte Team</p>
-                    `
-                });
-            } catch (emailErr) {
-                console.error("Welcome email failed on auto-register:", emailErr);
-            }
-        } else {
+        if (!user) { return res.status(400).json({ msg: 'Invalid Credentials' }); } else {
             // User exists, verify password
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
@@ -123,3 +94,4 @@ router.post('/login', async (req, res) => {
 });
 
 module.exports = router;
+
