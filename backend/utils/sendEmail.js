@@ -19,7 +19,7 @@ const createTransporter = async () => {
     } else {
         // Fallback to Ethereal mock email for demo purposes
         console.warn('⚠️ No EMAIL_USER found in .env, falling back to Ethereal Mock Email.');
-        const testAccount = await nodemailer.createTestAccount();
+        console.log('Skipping mock email in production'); return null;
         return nodemailer.createTransport({
             host: "smtp.ethereal.email",
             port: 587,
