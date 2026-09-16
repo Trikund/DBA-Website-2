@@ -31,9 +31,22 @@ app.use('/api/content', require('./routes/content'));
 
 // Production Setup
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../frontend/dist')));
-    app.use((req, res) => {
-        res.sendFile(path.resolve(__dirname, '../frontend/dist', 'index.html'));
+    // Serve Landing Page first
+    app.use(express.static(path.join(__dirname, '../landing_page')));
+    
+    // Serve React App (Portals)
+    app.use('/app', express.static(path.join(__dirname, '../frontend/dist')));
+    
+    // Catch-all for React Router, but only if they went to /app or specific routes
+    // To not break landing page fallback, we will serve React index.html for known React routes:
+    const reactRoutes = ['/login', '/register', '/admin', '/student', '/trainer', '/payment-success'];
+    app.use((req, res, next) => {
+        if (reactRoutes.some(route => req.path.startsWith(route))) {
+            res.sendFile(path.resolve(__dirname, '../frontend/dist', 'index.html'));
+        } else {
+            // Default fallback to landing page index
+            res.sendFile(path.resolve(__dirname, '../landing_page', 'index.html'));
+        }
     });
 } else {
     app.get('/', (req, res) => {
@@ -55,3 +68,4 @@ mongoose.connect(MONGO_URI)
     .catch((error) => {
         console.error('Error connecting to MongoDB:', error.message);
     });
+

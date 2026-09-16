@@ -553,7 +553,7 @@ if (aiInputWrapper) {
         msgText.innerHTML = '<span class="thinking-dots">Thinking<span>.</span><span>.</span><span>.</span></span>';
 
         try {
-            const url = `http://localhost:5000/api/ai/chat`;
+            const url = `/api/ai/chat`;
             
             const response = await fetch(url, {
                 method: 'POST',
@@ -749,7 +749,7 @@ if (landingEnquiryForm) {
         const course = document.getElementById('enquiryCourse').value;
         
         try {
-            const res = await fetch('http://localhost:5000/api/enquiry', {
+            const res = await fetch('/api/enquiry', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ fullName, phoneNumber, course })
