@@ -121,7 +121,7 @@ router.get('/seed-demo-data', async (req, res) => {
         
         const studentDocs = students.map((name, i) => ({
             name: name,
-            email: student@gmail.com,
+            email: 'student' + (i+1) + '@gmail.com',
             password: hashedPassword,
             role: 'student',
             course: ['MERN Full Stack', 'Data Science', 'Cyber Security', 'Cloud Computing', 'AI ML'][i % 5]
