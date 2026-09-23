@@ -111,7 +111,7 @@ router.post('/chat', async (req, res) => {
         res.json({ reply: text });
     } catch (error) {
         console.error("AI Chat Error:", error);
-        res.status(500).json({ error: "Failed to process AI chat" });
+        res.status(500).json({ error: error.message || error.toString() });
     }
 });
 
