@@ -33,6 +33,8 @@ router.post('/chat', async (req, res) => {
                 "fee": "Our courses are very affordable with flexible EMI options available. We focus on providing premium education and 100% placement assistance.",
                 "hi": "Hello! I am the AI counselor for Digital Byte Academy. How can I assist you with your tech journey today?",
                 "hello": "Hello! I am the AI counselor for Digital Byte Academy. How can I assist you with your tech journey today?",
+                "contact": "You can contact Digital Byte Academy at support@digitalbyte.com or call us at +91-9876543210. Our office is open Mon-Fri, 9 AM to 6 PM.",
+                "support": "You can contact Digital Byte Academy at support@digitalbyte.com or call us at +91-9876543210. Our office is open Mon-Fri, 9 AM to 6 PM.",
             };
 
             for (const [key, val] of Object.entries(techDictionary)) {
@@ -114,3 +116,4 @@ router.post('/chat', async (req, res) => {
 });
 
 module.exports = router;
+
