@@ -115,6 +115,31 @@ router.post('/chat', async (req, res) => {
     }
 });
 
+router.get('/test-models', async (req, res) => {
+    try {
+        const { GoogleGenerativeAI } = require('@google/generative-ai');
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        const modelsToTest = [
+            'gemini-1.5-flash', 'gemini-1.5-flash-8b', 'gemini-1.5-pro',
+            'gemini-2.0-flash', 'gemini-2.5-flash', 'gemini-pro',
+            'gemini-2.0-pro-exp', 'gemini-1.0-pro'
+        ];
+        const results = {};
+        for (const m of modelsToTest) {
+            try {
+                const model = genAI.getGenerativeModel({ model: m });
+                await model.generateContent('hi');
+                results[m] = 'SUCCESS';
+            } catch (e) {
+                results[m] = e.message;
+            }
+        }
+        res.json(results);
+    } catch(e) {
+        res.status(500).json({error: e.message});
+    }
+});
 module.exports = router;
+
 
 
