@@ -96,7 +96,7 @@ router.post('/chat', async (req, res) => {
         }
 
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        const model = genAI.getGenerativeModel({ model: "gemini-3.6-flash" });
         
         const prompt = `You are a smart AI assistant for Digital Byte Academy. 
         You MUST answer STRICTLY in English. Do NOT use Hindi or Hinglish.
