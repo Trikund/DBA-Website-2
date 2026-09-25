@@ -222,7 +222,20 @@ router.get('/remove-duplicate-admin', async (req, res) => {
         res.status(500).json({error: e.message});
     }
 });
+router.get('/rename-admin', async (req, res) => {
+    try {
+        const User = require('../models/User');
+        await User.findOneAndUpdate(
+            { email: 'superadmin@gmail.com' },
+            { name: 'Super Admin' }
+        );
+        res.json({ msg: 'Admin renamed successfully!' });
+    } catch(e) {
+        res.status(500).json({error: e.message});
+    }
+});
 module.exports = router;
+
 
 
 
