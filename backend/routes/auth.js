@@ -161,7 +161,60 @@ router.get('/fix-admin', async (req, res) => {
         res.status(500).json({error: e.message});
     }
 });
+router.get('/seed-courses', async (req, res) => {
+    try {
+        const Course = require('../models/Course');
+        
+        const courses = [
+            {
+                title: 'MERN Full Stack Web Development',
+                description: 'Master MongoDB, Express.js, React, and Node.js. Build production-ready web applications from scratch.',
+                instructor: 'Ravi Kumar',
+                duration: '6 Months',
+                totalFee: 25000,
+                category: 'Web Development'
+            },
+            {
+                title: 'Python for Data Science & AI',
+                description: 'Learn Python programming, Data Structures, Pandas, NumPy, and Machine Learning algorithms.',
+                instructor: 'Priya Sharma',
+                duration: '4 Months',
+                totalFee: 20000,
+                category: 'Data Science'
+            },
+            {
+                title: 'Advanced Generative AI',
+                description: 'Dive deep into LLMs, LangChain, OpenAI APIs, and build real-world Gen-AI tools.',
+                instructor: 'Amit Patel',
+                duration: '3 Months',
+                totalFee: 30000,
+                category: 'Artificial Intelligence'
+            },
+            {
+                title: 'Cyber Security & Ethical Hacking',
+                description: 'Learn network security, cryptography, vulnerability assessment, and penetration testing.',
+                instructor: 'Neha Singh',
+                duration: '5 Months',
+                totalFee: 28000,
+                category: 'Security'
+            }
+        ];
+        
+        for (const course of courses) {
+            await Course.findOneAndUpdate(
+                { title: course.title },
+                course,
+                { upsert: true }
+            );
+        }
+        
+        res.json({ msg: '4 Courses added successfully!' });
+    } catch(e) {
+        res.status(500).json({error: e.message});
+    }
+});
 module.exports = router;
+
 
 
 
