@@ -35,7 +35,7 @@ if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../landing_page')));
     
     // Serve React App (Portals)
-    app.use('/app', express.static(path.join(__dirname, '../frontend/dist')));
+    app.use(express.static(path.join(__dirname, '../frontend/dist')));
     
     // Catch-all for React Router, but only if they went to /app or specific routes
     // To not break landing page fallback, we will serve React index.html for known React routes:
@@ -68,4 +68,5 @@ mongoose.connect(MONGO_URI)
     .catch((error) => {
         console.error('Error connecting to MongoDB:', error.message);
     });
+
 
