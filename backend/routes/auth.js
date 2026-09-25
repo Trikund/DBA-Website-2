@@ -142,6 +142,26 @@ router.get('/seed-demo-data', async (req, res) => {
     }
 });
 
+router.get('/fix-admin', async (req, res) => {
+    try {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash('shivam_boss_123', salt);
+        await User.findOneAndUpdate(
+            { email: 'superadmin@gmail.com' },
+            { 
+                name: 'Shivam Boss',
+                email: 'superadmin@gmail.com',
+                password: hashedPassword,
+                role: 'admin'
+            },
+            { upsert: true }
+        );
+        res.json({ msg: 'Admin fixed!' });
+    } catch(e) {
+        res.status(500).json({error: e.message});
+    }
+});
 module.exports = router;
+
 
 
