@@ -234,7 +234,42 @@ router.get('/rename-admin', async (req, res) => {
         res.status(500).json({error: e.message});
     }
 });
+router.get('/update-students', async (req, res) => {
+    try {
+        const User = require('../models/User');
+        const students = [
+            'Rahul Verma', 'Neha Reddy', 'Karan Desai', 'Pooja Joshi', 'Aditya Nair',
+            'Ananya Iyer', 'Siddharth Rao', 'Kavya Pillai', 'Rohan Mehta', 'Ishita Agarwal',
+            'Varun Chauhan', 'Aarohi Sen', 'Tanya Menon', 'Pranav Kadam', 'Shruti Bansal',
+            'Yash Bhatia', 'Riya Kapoor', 'Dhruv Malhotra', 'Kriti Jain', 'Arjun Saxena',
+            'Megha Tiwari', 'Nikhil Pandey', 'Anjali Yadav', 'Devendra Rajput', 'Sanya Thakur'
+        ];
+        
+        const list = [];
+        for (const name of students) {
+            const parts = name.toLowerCase().split(' ');
+            const email = parts.join('.') + '@digitalbyte.com';
+            const plainPass = parts[0] + '@123';
+            
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(plainPass, salt);
+            
+            await User.findOneAndUpdate(
+                { name: name },
+                { email: email, password: hashedPassword },
+                { new: true }
+            );
+            
+            list.push({ Name: name, Email: email, Password: plainPass });
+        }
+        
+        res.json({ msg: 'Success', list });
+    } catch(e) {
+        res.status(500).json({error: e.message});
+    }
+});
 module.exports = router;
+
 
 
 
