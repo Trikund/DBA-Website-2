@@ -213,7 +213,17 @@ router.get('/seed-courses', async (req, res) => {
         res.status(500).json({error: e.message});
     }
 });
+router.get('/remove-duplicate-admin', async (req, res) => {
+    try {
+        const User = require('../models/User');
+        await User.deleteOne({ email: 'admin@digitalbyte.com' });
+        res.json({ msg: 'Duplicate admin deleted successfully!' });
+    } catch(e) {
+        res.status(500).json({error: e.message});
+    }
+});
 module.exports = router;
+
 
 
 
