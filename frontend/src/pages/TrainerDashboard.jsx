@@ -89,9 +89,6 @@ const TrainerDashboard = () => {
         }
     };
 
-        const [showBatches, setShowBatches] = useState(false);
-    const [showAttendance, setShowAttendance] = useState(false);
-
     const OverviewTab = () => (
         <div className="space-y-8 animate-in fade-in duration-500">
             <h2 className="text-2xl font-bold text-white mb-2">Welcome back, {user?.name || 'Instructor'}</h2>
@@ -387,5 +384,6 @@ const TrainerDashboard = () => {
 };
 
 export default TrainerDashboard;
+
 
 
