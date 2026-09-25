@@ -16,6 +16,8 @@ const TrainerDashboard = () => {
     const [selectedCourse, setSelectedCourse] = useState('');
     const [loading, setLoading] = useState(true);
     const [inCall, setInCall] = useState(false);
+    const [showBatches, setShowBatches] = useState(false);
+    const [showAttendance, setShowAttendance] = useState(false);
     const navigate = useNavigate();
 
     // Upload Form State
@@ -87,20 +89,23 @@ const TrainerDashboard = () => {
         }
     };
 
+        const [showBatches, setShowBatches] = useState(false);
+    const [showAttendance, setShowAttendance] = useState(false);
+
     const OverviewTab = () => (
         <div className="space-y-8 animate-in fade-in duration-500">
             <h2 className="text-2xl font-bold text-white mb-2">Welcome back, {user?.name || 'Instructor'}</h2>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="luxury-glass p-6 rounded-2xl border-blue-500/20 group hover:border-blue-500/50 transition-colors">
                     <div className="flex items-center justify-between mb-4">
                         <div className="p-3 bg-blue-500/10 rounded-xl text-blue-400">
-                            <BookOpen className="w-6 h-6" />
+                            <Users className="w-6 h-6" />
                         </div>
                     </div>
                     <h3 className="text-xl font-bold text-white mb-1">My Batches</h3>
-                    <p className="text-zinc-400 mb-4">Manage your assigned students and track their progress.</p>
-                    <button className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl font-medium transition-colors border border-white/10">
+                    <p className="text-zinc-400 mb-4 text-sm">Manage your assigned students and track their progress.</p>
+                    <button onClick={() => setShowBatches(true)} className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl font-medium transition-colors border border-white/10">
                         View Students
                     </button>
                 </div>
@@ -112,8 +117,8 @@ const TrainerDashboard = () => {
                         </div>
                     </div>
                     <h3 className="text-xl font-bold text-white mb-1">Mark Attendance</h3>
-                    <p className="text-zinc-400 mb-4">Record student attendance for today's live classes.</p>
-                    <button className="w-full py-2.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 rounded-xl font-bold transition-colors">
+                    <p className="text-zinc-400 mb-4 text-sm">Record student attendance for today's live classes.</p>
+                    <button onClick={() => setShowAttendance(true)} className="w-full py-2.5 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border border-emerald-500/30 rounded-xl font-bold transition-colors">
                         Open Register
                     </button>
                 </div>
@@ -124,16 +129,80 @@ const TrainerDashboard = () => {
                             <Presentation className="w-6 h-6" />
                         </div>
                         <span className="px-3 py-1 bg-red-500/10 border border-red-500/20 text-xs font-bold text-red-400 rounded-full flex items-center gap-1 animate-pulse">
-                            <span className="w-2 h-2 rounded-full bg-red-500"></span> Live Action
+                            <span className="w-2 h-2 rounded-full bg-red-500"></span> Live
                         </span>
                     </div>
                     <h3 className="text-xl font-bold text-white mb-1">Start Live Class</h3>
-                    <p className="text-zinc-400 mb-4">Initiate a live video session with your batch.</p>
+                    <p className="text-zinc-400 mb-4 text-sm">Initiate a live video session with your batch.</p>
                     <button onClick={() => setInCall(true)} className="w-full py-2.5 bg-purple-500 hover:bg-purple-600 text-white shadow-lg shadow-purple-500/25 rounded-xl font-bold transition-all flex items-center justify-center gap-2">
                         <Video className="w-4 h-4" /> Start Meeting
                     </button>
                 </div>
+
+                <div className="luxury-glass p-6 rounded-2xl border-orange-500/20 group hover:border-orange-500/50 transition-colors">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="p-3 bg-orange-500/10 rounded-xl text-orange-400">
+                            <FileText className="w-6 h-6" />
+                        </div>
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-1">Assignments</h3>
+                    <p className="text-zinc-400 mb-4 text-sm">Review submissions and grade student assignments.</p>
+                    <button onClick={() => alert('Assignments Module coming soon!')} className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-white rounded-xl font-medium transition-colors border border-white/10">
+                        Grade Submissions
+                    </button>
+                </div>
             </div>
+
+            {/* Modals */}
+            {showBatches && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-[#121214] border border-white/10 rounded-2xl w-full max-w-2xl p-6 relative">
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-xl font-bold text-white">My Assigned Students</h3>
+                            <button onClick={() => setShowBatches(false)} className="text-zinc-400 hover:text-white"><LogOut className="w-5 h-5" /></button>
+                        </div>
+                        <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                            {['Rahul Verma', 'Karan Desai', 'Neha Reddy', 'Aditya Nair', 'Pooja Joshi'].map((name, i) => (
+                                <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between hover:bg-white/10 transition-colors">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold">
+                                            {name.charAt(0)}
+                                        </div>
+                                        <div>
+                                            <p className="font-medium text-white">{name}</p>
+                                            <p className="text-sm text-zinc-400">MERN Stack Batch A</p>
+                                        </div>
+                                    </div>
+                                    <span className="px-3 py-1 bg-green-500/10 text-green-400 text-xs rounded-full border border-green-500/20">Active</span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showAttendance && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-[#121214] border border-white/10 rounded-2xl w-full max-w-xl p-6 relative">
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-xl font-bold text-white">Mark Attendance - Today</h3>
+                            <button onClick={() => setShowAttendance(false)} className="text-zinc-400 hover:text-white"><LogOut className="w-5 h-5" /></button>
+                        </div>
+                        <div className="space-y-4">
+                            {['Rahul Verma', 'Karan Desai', 'Neha Reddy'].map((name, i) => (
+                                <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-white/5 bg-black/40">
+                                    <p className="text-white font-medium">{name}</p>
+                                    <div className="flex gap-2">
+                                        <button className="px-4 py-1.5 rounded-lg text-sm font-medium bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30">Present</button>
+                                        <button className="px-4 py-1.5 rounded-lg text-sm font-medium bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30">Absent</button>
+                                    </div>
+                                </div>
+                            ))}
+                            <button onClick={() => { alert('Attendance saved!'); setShowAttendance(false); }} className="w-full mt-4 py-3 bg-blue-500 text-white rounded-xl font-bold">Submit Register</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 
@@ -318,4 +387,5 @@ const TrainerDashboard = () => {
 };
 
 export default TrainerDashboard;
+
 
