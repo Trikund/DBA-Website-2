@@ -328,9 +328,7 @@ const TrainerDashboard = () => {
             <aside className="w-64 border-r border-white/10 bg-black/50 backdrop-blur-xl flex flex-col fixed h-full z-20">
                 <div className="p-6">
                     <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
-                            <span className="text-white font-bold text-xl">D</span>
-                        </div>
+                        <img src="/logo.png" alt="Logo" className="w-10 h-10 object-contain" />
                         <span className="text-xl font-bold text-white tracking-tight">Digital Byte</span>
                     </div>
                 </div>
@@ -384,6 +382,7 @@ const TrainerDashboard = () => {
 };
 
 export default TrainerDashboard;
+
 
 
 
