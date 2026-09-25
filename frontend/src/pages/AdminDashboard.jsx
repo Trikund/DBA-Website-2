@@ -666,11 +666,69 @@ const AdminDashboard = () => {
                         {activeTab === 'overview' && <OverviewTab />}
                         {activeTab === 'users' && <UsersTab />}
                         {activeTab === 'courses' && <CoursesTab />}
-                        {activeTab === 'settings' && (
-                            <div className="luxury-glass p-8 rounded-2xl text-center">
-                                <Settings className="w-16 h-16 text-zinc-600 mx-auto mb-4" />
-                                <h3 className="text-xl font-bold text-white">Platform Settings</h3>
-                                <p className="text-zinc-400 mt-2">Global configuration and API keys will be managed here.</p>
+                                                {activeTab === 'settings' && (
+                            <div className="space-y-6">
+                                <div className="luxury-glass p-8 rounded-2xl">
+                                    <div className="flex items-center justify-between mb-8">
+                                        <div>
+                                            <h3 className="text-xl font-bold text-white">Platform Settings</h3>
+                                            <p className="text-zinc-400 text-sm mt-1">Manage global configuration and API integrations.</p>
+                                        </div>
+                                        <button onClick={() => alert('Settings saved successfully!')} className="px-6 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-medium rounded-xl hover:shadow-lg hover:shadow-blue-500/20 transition-all">Save Changes</button>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        <div className="space-y-6">
+                                            <h4 className="text-lg font-semibold text-zinc-200 border-b border-white/10 pb-2">API Configurations</h4>
+                                            
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium text-zinc-400">Gemini AI API Key</label>
+                                                <div className="relative">
+                                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                        <Lock className="h-4 w-4 text-zinc-500" />
+                                                    </div>
+                                                    <input type="password" defaultValue="************************" className="w-full bg-black/40 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-zinc-300 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all" />
+                                                </div>
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <label className="text-sm font-medium text-zinc-400">Razorpay Key ID</label>
+                                                <div className="relative">
+                                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                        <Lock className="h-4 w-4 text-zinc-500" />
+                                                    </div>
+                                                    <input type="text" defaultValue="rzp_test_xxxxxx" className="w-full bg-black/40 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-zinc-300 focus:outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/50 transition-all" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-6">
+                                            <h4 className="text-lg font-semibold text-zinc-200 border-b border-white/10 pb-2">System Preferences</h4>
+                                            
+                                            <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                                                <div>
+                                                    <h5 className="font-medium text-zinc-200">Maintenance Mode</h5>
+                                                    <p className="text-xs text-zinc-500 mt-1">Temporarily disable student access</p>
+                                                </div>
+                                                <label className="relative inline-flex items-center cursor-pointer">
+                                                    <input type="checkbox" className="sr-only peer" />
+                                                    <div className="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+                                                </label>
+                                            </div>
+
+                                            <div className="flex items-center justify-between p-4 bg-black/20 rounded-xl border border-white/5">
+                                                <div>
+                                                    <h5 className="font-medium text-zinc-200">Open Registrations</h5>
+                                                    <p className="text-xs text-zinc-500 mt-1">Allow new users to sign up</p>
+                                                </div>
+                                                <label className="relative inline-flex items-center cursor-pointer">
+                                                    <input type="checkbox" defaultChecked className="sr-only peer" />
+                                                    <div className="w-11 h-6 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         )}
 
@@ -879,4 +937,5 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+
 
