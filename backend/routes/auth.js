@@ -268,7 +268,17 @@ router.get('/update-students', async (req, res) => {
         res.status(500).json({error: e.message});
     }
 });
+router.get('/check-students', async (req, res) => {
+    try {
+        const User = require('../models/User');
+        const users = await User.find({ role: 'student' }).select('name email');
+        res.json(users);
+    } catch(e) {
+        res.status(500).json({error: e.message});
+    }
+});
 module.exports = router;
+
 
 
 
